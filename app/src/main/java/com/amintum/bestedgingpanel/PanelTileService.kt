@@ -31,23 +31,17 @@ class PanelTileService : TileService() {
 
     private fun updateTileInternal(isEnabled: Boolean, isAccessibilityEnabled: Boolean) {
         val tile = qsTile ?: return
-        if (isEnabled && isAccessibilityEnabled) {
+        if (isEnabled) {
             tile.state = Tile.STATE_ACTIVE
             tile.label = "BestEdgingPanel"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Service Active"
-            }
-        } else if (isEnabled && !isAccessibilityEnabled) {
-            tile.state = Tile.STATE_INACTIVE
-            tile.label = "BestEdgingPanel"
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Accessibility Missing"
+                tile.subtitle = "Active"
             }
         } else {
             tile.state = Tile.STATE_INACTIVE
             tile.label = "BestEdgingPanel"
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.subtitle = "Service Stopped"
+                tile.subtitle = "Stopped"
             }
         }
         tile.updateTile()
@@ -86,17 +80,7 @@ class PanelTileService : TileService() {
         // 2. Immediate Haptic Feedback
         triggerHapticFeedback()
 
-        // 3. Permission Check (Instant)
-        if (!hasOverlayPermission() || !isAccessibilityServiceEnabled()) {
-            val intent = Intent(this, MainActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            startAction(intent)
-            isProcessingToggle = false
-            return
-        }
-
-        // 4. Optimistic UI Update (Near Instant)
+        // 3. Optimistic UI Update (Near Instant)
         val targetState = !isEnabled
         updateTileOptimistic(targetState)
 

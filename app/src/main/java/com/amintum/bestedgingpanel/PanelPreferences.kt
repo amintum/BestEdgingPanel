@@ -700,7 +700,7 @@ class PanelPreferences(context: Context) {
         set(value) = prefs.edit { putString(KEY_PICKER_ANIM_TYPE, value) }
 
     var setupCompleted: Boolean
-        get() = prefs.getBoolean("setup_completed_v2", false)
+        get() = prefs.getBoolean("setup_completed_v2", true)
         set(value) = prefs.edit { putBoolean("setup_completed_v2", value) }
 
     var toolsFolderMigrated: Boolean

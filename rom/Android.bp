@@ -1,0 +1,21 @@
+// Android.bp for building BestEdgingPanel as a privileged system app in AOSP / Custom ROM trees
+
+android_app_import {
+    name: "BestEdgingPanel",
+    apk: "BestEdgingPanel.apk",
+    certificate: "platform",
+    dex_preopt: {
+        enabled: false,
+    },
+    privileged: true,
+    system_ext_specific: true,
+    required: ["privapp-permissions-bestedgingpanel.xml"],
+}
+
+prebuilt_etc {
+    name: "privapp-permissions-bestedgingpanel.xml",
+    sub_dir: "permissions",
+    src: "etc/permissions/privapp-permissions-com.amintum.bestedgingpanel.xml",
+    filename_from_src: true,
+    system_ext_specific: true,
+}

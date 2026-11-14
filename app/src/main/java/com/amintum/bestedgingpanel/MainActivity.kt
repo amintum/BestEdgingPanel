@@ -26,32 +26,13 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
         super.attachBaseContext(LocaleHelper.onAttach(newBase))
     }
 
-    private val overlayPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        updatePermissionUI()
-        updateServiceStatus()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        android.util.Log.d("MainActivity", "Current Locale: ${java.util.Locale.getDefault().language}")
-        binding = com.amintum.bestedgingpanel.databinding.ActivityMainM3Binding.inflate(layoutInflater)
-
+        binding = ActivityMainM3Binding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Hide default action bar
         supportActionBar?.hide()
-
-
-
         panelPrefs = PanelPreferences(this)
-
-        if (!panelPrefs.setupCompleted) {
-            startActivity(Intent(this, SetupActivity::class.java))
-            finish()
-            return
-        }
 
         setupListeners()
         registerPinnedShortcut()
@@ -80,19 +61,6 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
     }
 
     private fun setupListeners() {
-        binding.btnPermissionsStatus.setOnClickListener {
-            startActivity(Intent(this, PermissionsActivity::class.java))
-        }
-
-        binding.btnGrantPermission.setOnClickListener { requestOverlayPermission() }
-        binding.btnIgnoreBattery.setOnClickListener { requestIgnoreBatteryOptimization() }
-        binding.btnFixFreeform.setOnClickListener {
-            val intent = Intent(this, InteractionSettingsActivity::class.java).apply {
-                putExtra(SettingsMainActivity.EXTRA_SCROLL_TO, "feature_freeform")
-            }
-            startActivity(intent)
-        }
-        
         val toggleListener = View.OnClickListener { togglePanel() }
         binding.btnStartStop.setOnClickListener(toggleListener)
         binding.btnStartStopClassic.setOnClickListener(toggleListener)
@@ -131,7 +99,6 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
         prefs.registerOnSharedPreferenceChangeListener(this)
         
         applyHomeButtonStyle()
-        updatePermissionUI()
         updateServiceStatus()
     }
 
@@ -157,12 +124,9 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
 
     private fun updateServiceStatus() {
         val isEnabled = panelPrefs.serviceEnabled
-        val isAccessibilityEnabled = isAccessibilityServiceEnabled()
-        val automationActive = panelPrefs.useAutomationForGestures && AutomationManager.isAutomationPossible()
-        
         val typedValue = android.util.TypedValue()
         
-        if (isEnabled && (isAccessibilityEnabled || automationActive)) {
+        if (isEnabled) {
             // Service is fully ACTIVE (Green)
             binding.btnStartStop.backgroundTintList = android.content.res.ColorStateList.valueOf(Color.parseColor("#2ECC71"))
             binding.btnStartStop.setIconTintResource(android.R.color.white)
@@ -171,28 +135,10 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
             binding.btnStartStopClassic.backgroundTintList = android.content.res.ColorStateList.valueOf(Color.parseColor("#2ECC71"))
             binding.btnStartStopClassic.setTextColor(Color.WHITE)
 
-            val statusSuffix = when {
-                automationActive && AutomationManager.isRootAvailable() -> " (Root)"
-                automationActive && AutomationManager.isShizukuAvailable() -> " (Shizuku)"
-                panelPrefs.useAutomationForGestures -> " (Service Stopped)"
-                else -> ""
-            }
-            binding.tvStatus.text = if (automationActive) "Active$statusSuffix" else if (panelPrefs.useAutomationForGestures) getString(R.string.status_automation_stopped) else getString(R.string.status_service_active)
+            binding.tvStatus.text = getString(R.string.status_service_active)
             theme.resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true)
             binding.tvStatus.setTextColor(typedValue.data)
             binding.statusDot.imageTintList = android.content.res.ColorStateList.valueOf(Color.parseColor("#2ECC71"))
-        } else if (isEnabled && !isAccessibilityEnabled) {
-            // Preference is ON, but Accessibility is MISSING (Yellow warning)
-            binding.btnStartStop.backgroundTintList = android.content.res.ColorStateList.valueOf(Color.parseColor("#F1C40F"))
-            binding.btnStartStop.setIconTintResource(android.R.color.white)
-            
-            binding.btnStartStopClassic.text = getString(R.string.action_fix)
-            binding.btnStartStopClassic.backgroundTintList = android.content.res.ColorStateList.valueOf(Color.parseColor("#F1C40F"))
-            binding.btnStartStopClassic.setTextColor(Color.WHITE)
-
-            binding.tvStatus.text = getString(R.string.status_accessibility_required)
-            binding.tvStatus.setTextColor(Color.parseColor("#F1C40F"))
-            binding.statusDot.imageTintList = android.content.res.ColorStateList.valueOf(Color.parseColor("#F1C40F"))
         } else {
             // Service is STOPPED (Slate)
             binding.btnStartStop.backgroundTintList = android.content.res.ColorStateList.valueOf(Color.parseColor("#475569"))
@@ -211,8 +157,6 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
         binding.btnStartStop.text = "" 
     }
 
-    // ── Permission ────────────────────────────────────────────────────────────
-
     private fun showLogsDialog() {
         val sdf = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault())
         val time = sdf.format(java.util.Date())
@@ -220,18 +164,16 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
         val logBuilder = StringBuilder()
         logBuilder.append("[$time] Log Session Started\n")
         logBuilder.append("[$time] Device: ${android.os.Build.MODEL} (${android.os.Build.VERSION.RELEASE})\n")
-        logBuilder.append("[$time] Overlay: ${if (hasOverlayPermission()) "GRANTED" else "MISSING"}\n")
-        logBuilder.append("[$time] Accessibility: ${if (isAccessibilityServiceEnabled()) "ACTIVE" else "INACTIVE"}\n")
+        logBuilder.append("[$time] Privileged System App Mode\n")
         logBuilder.append("[$time] Service: ${if (FloatingPanelService.isRunning) "RUNNING" else "STOPPED"}\n")
         logBuilder.append("[$time] Theme: ${panelPrefs.uiTheme.uppercase()}\n")
-        logBuilder.append("[$time] Status: FULL VERSION (Open Source)\n")
         logBuilder.append("[$time] --- End of Summary ---")
 
         val tv = TextView(this).apply {
             text = logBuilder.toString()
             setPadding(64, 32, 64, 32)
             typeface = android.graphics.Typeface.MONOSPACE
-            textSize = 12f // 12f is the float for sp
+            textSize = 12f
             setTextColor(Color.parseColor("#B3FFFFFF"))
             layoutParams = android.view.ViewGroup.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
@@ -250,144 +192,18 @@ class MainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSh
             .show()
     }
 
-    private fun hasOverlayPermission(): Boolean =
-        Settings.canDrawOverlays(this)
-
-    private fun requestOverlayPermission() {
-        val intent = Intent(
-            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            Uri.parse("package:$packageName")
-        )
-        overlayPermissionLauncher.launch(intent)
-    }
-
-    private fun isIgnoringBatteryOptimizations(): Boolean {
-        val powerManager = getSystemService(POWER_SERVICE) as android.os.PowerManager
-        return powerManager.isIgnoringBatteryOptimizations(packageName)
-    }
-
-    private fun requestIgnoreBatteryOptimization() {
-        // First, attempt the standard Android way
-        try {
-            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                data = Uri.parse("package:$packageName")
-            }
-            startActivity(intent)
-        } catch (e: Exception) {
-            // Fallback to general settings
-            try {
-                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-            } catch (e2: Exception) {}
-        }
-
-        // For OriginOS / Vivo / iQOO devices, the standard way often isn't enough.
-        // We provide a small delay and then attempt to open their specific "High Power Consumption" or "BgStartUp" manager.
-        val manufacturer = Build.MANUFACTURER.lowercase()
-        if (manufacturer.contains("vivo") || manufacturer.contains("iqoo")) {
-            binding.root.postDelayed({
-                openVivoSpecificSettings()
-            }, 1000)
-        }
-    }
-
-    private fun openVivoSpecificSettings() {
-        val intents = arrayOf(
-            Intent().apply { setClassName("com.vivo.abe", "com.vivo.abe.unifiedpower.HighPowerConsumptionActivity") },
-            Intent().apply { setClassName("com.vivo.permissionmanager", "com.vivo.permissionmanager.activity.BgStartUpManagerActivity") },
-            Intent().apply { setClassName("com.iqoo.secure", "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager") },
-            Intent().apply { setClassName("com.vivo.abe", "com.vivo.abe.unifiedpower.UnifiedPowerActivity") }
-        )
-
-        for (intent in intents) {
-            try {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                return // Success
-            } catch (e: Exception) {
-                // Try next one
-            }
-        }
-    }
-
-    private fun updatePermissionUI() {
-        val granted = hasOverlayPermission()
-        val standardBatteryIgnored = isIgnoringBatteryOptimizations()
-        val hasAccessibility = isAccessibilityServiceEnabled()
-        val automationActive = panelPrefs.useAutomationForGestures && AutomationManager.isAutomationPossible()
-        
-        val allPermissionsGood = granted && (hasAccessibility || automationActive) && standardBatteryIgnored
-        binding.badgePermissionAlert.visibility = if (allPermissionsGood) View.GONE else View.VISIBLE
-
-        val typedValue = android.util.TypedValue()
-        theme.resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true)
-        binding.ivShieldIcon.imageTintList = android.content.res.ColorStateList.valueOf(typedValue.data)
-
-        // Show/Hide Activity Logs button based on user preference
-        binding.btnShowLogs.visibility = if (panelPrefs.showLogs) View.VISIBLE else View.GONE
-
-        // For Vivo/iQOO, we want to keep the card visible until standard optimization is ignored,
-        // so the user can easily reach the deep-links. Once ignored, it disappears.
-        val batteryCardVisible = !standardBatteryIgnored
-
-        binding.cardPermission.visibility = if (granted) View.GONE else View.VISIBLE
-        binding.cardBatteryOptimization.visibility = if (batteryCardVisible) View.VISIBLE else View.GONE
-
-        val freeformMismatch = panelPrefs.freeformEnabled && !isFreeformEnabled()
-        binding.cardFreeformOptimization.visibility = if (freeformMismatch) View.VISIBLE else View.GONE
-        
-        binding.btnStartStop.isEnabled = granted
-        binding.btnStartStopClassic.isEnabled = granted
-
-        // Show Android 13 sideload note for users who can't find the permission toggle
-        if (!granted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            binding.tvSideloadNote.visibility = View.VISIBLE
-        }
-    }
-
-    // ── Service Toggle ────────────────────────────────────────────────────────
-
     private fun togglePanel() {
         val activeBtn = if (panelPrefs.homeButtonStyle == PanelPreferences.STYLE_POWER) 
             binding.btnStartStop else binding.btnStartStopClassic
             
-        // Haptic feedback for tactile feel
         activeBtn.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
-        
-        // Scale animation
         SpringAnimator.scalePulse(activeBtn)
 
-        if (!hasOverlayPermission()) {
-            requestOverlayPermission()
-            return
-        }
-
-        val automationEnabled = panelPrefs.useAutomationForGestures && AutomationManager.isAutomationPossible()
-        if (!automationEnabled && !isAccessibilityServiceEnabled()) {
-            binding.root.showModernToast("Please enable 'SidePanel' in Accessibility Settings", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
-            openAccessibilitySettings()
-            return
-        }
-
-        // Use centralized logic
         panelPrefs.toggleService(this)
-        
-        // UI will be updated by the OnSharedPreferenceChangeListener
     }
 
     private fun triggerPanelToggle() {
-        if (!hasOverlayPermission()) {
-            requestOverlayPermission()
-            return
-        }
-        
-        val automationEnabled = panelPrefs.useAutomationForGestures && AutomationManager.isAutomationPossible()
-        if (!automationEnabled && !isAccessibilityServiceEnabled()) {
-            binding.root.showModernToast("Please enable 'SidePanel' in Accessibility Settings", Snackbar.LENGTH_LONG)
-            openAccessibilitySettings()
-            return
-        }
-        
-        binding.root.showModernToast("Opening Sidebar...")
+        binding.root.showModernToast("Opening BestEdgingPanel...")
         val intent = Intent(this, FloatingPanelService::class.java).apply {
             action = FloatingPanelService.ACTION_OPEN
         }

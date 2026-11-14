@@ -25,6 +25,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility="gone"
                 android:contentDescription="@string/section_permissions_setup">
 
                 <ImageView
@@ -218,141 +219,6 @@
                         android:textColor="?attr/colorOnPrimary"
                         app:cornerRadius="24dp" />
 
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- BATTERY OPTIMIZATION ALERT -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardBatteryOptimization"
-                style="@style/App_Card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
-                app:strokeWidth="1dp"
-                app:strokeColor="#2ECC71"
-                android:layout_marginBottom="24dp"
-                android:visibility="gone">
-
-                <LinearLayout
-                    style="@style/App_CardContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/alert_battery_title"
-                        android:textColor="#2ECC71"
-                        android:textStyle="bold"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/alert_battery_desc"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnIgnoreBattery"
-                        style="@style/App_Button_Tonal"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="16dp"
-                        app:backgroundTint="#2ECC71"
-                        android:text="@string/alert_battery_btn"
-                        android:textColor="#FFFFFF" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- FREEFORM OPTIMIZATION ALERT -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardFreeformOptimization"
-                style="@style/App_Card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorSecondary"
-                android:layout_marginBottom="24dp"
-                android:visibility="gone">
-
-                <LinearLayout
-                    style="@style/App_CardContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/alert_freeform_title"
-                        android:textColor="?attr/colorSecondary"
-                        android:textStyle="bold"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/alert_freeform_desc"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnFixFreeform"
-                        style="@style/App_Button_Tonal"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="16dp"
-                        app:backgroundTint="?attr/colorSecondary"
-                        android:text="@string/alert_freeform_btn"
-                        android:textColor="?attr/colorOnSecondary" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- PERMISSION ALERT -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardPermission"
-                style="@style/App_Card"
-                app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:visibility="gone">
-
-                <LinearLayout
-                    style="@style/App_CardContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/alert_permission_title"
-                        android:textColor="?attr/colorError"
-                        android:textStyle="bold"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/alert_permission_desc"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="12sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnGrantPermission"
-                        style="@style/App_Button_Tonal"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="16dp"
-                        app:backgroundTint="?attr/colorError"
-                        android:text="@string/alert_permission_btn"
-                        android:textColor="?attr/colorOnError" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
