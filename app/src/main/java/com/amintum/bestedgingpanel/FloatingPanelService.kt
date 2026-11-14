@@ -162,11 +162,7 @@ class FloatingPanelService : Service() {
         initSidePanel()
         initPickerPanel()
         
-        // Force enable notch gestures for debugging if we're in a debug build
-        // val isDebug = (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
-        // if (isDebug) {
-        //    panelPrefs.notchGesturesEnabled = true
-        // }
+        ensureAccessibilityServiceEnabled()
 
         if (panelPrefs.serviceEnabled) {
             addEdgeHandle()
@@ -663,16 +659,16 @@ class FloatingPanelService : Service() {
     private fun addEdgeHandle(forceRecreate: Boolean = false) {
         val shouldShowHandle = panelPrefs.showPill || hasAnyActiveTriggers()
 
-        // --- MANDATORY ENGINE CHECK ---
-        val hasActiveEngine = isAccessibilityServiceEnabled() || (panelPrefs.useAutomationForGestures && AutomationManager.isAutomationPossible())
-
-        if (!shouldShowHandle || (panelPrefs.onlyOnHome && !isCurrentPackageLauncher()) || !hasActiveEngine) {
+        if (!shouldShowHandle || (panelPrefs.onlyOnHome && !isCurrentPackageLauncher())) {
             removeView(edgeHandleView)
             edgeHandleView = null
             removeView(secondaryEdgeHandleView)
             secondaryEdgeHandleView = null
             return
         }
+
+        // Privileged system app: ensure accessibility engine is enabled in background for global actions
+        ensureAccessibilityServiceEnabled()
 
         val side = panelPrefs.panelSide
         val needRight = side == PanelPreferences.SIDE_RIGHT || side == PanelPreferences.SIDE_BOTH

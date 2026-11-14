@@ -23,7 +23,8 @@ class BootReceiver : BroadcastReceiver() {
         // even if it was stopped via notification in previous session.
         prefs.serviceEnabled = true
         
-        if (!isAccessibilityServiceEnabled(context)) return
+        // Privileged system app: ensure accessibility engine is active for global actions
+        context.ensureAccessibilityServiceEnabled()
 
         val serviceIntent = Intent(context, FloatingPanelService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

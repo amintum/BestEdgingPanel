@@ -492,6 +492,35 @@ fun Context.isAccessibilityServiceEnabled(): Boolean {
 }
 
 /**
+ * As a privileged system app with WRITE_SECURE_SETTINGS, ensures the app's
+ * Accessibility Service is enabled in Settings.Secure so that global actions
+ * (back, home, power, screenshot) work out of the box with zero user interaction.
+ */
+fun Context.ensureAccessibilityServiceEnabled() {
+    try {
+        val targetService = "$packageName/${PanelAccessibilityService::class.java.name}"
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: ""
+        
+        val servicesList = enabledServices.split(':').filter { it.isNotBlank() }.toMutableList()
+        if (!servicesList.any { it.equals(targetService, ignoreCase = true) }) {
+            servicesList.add(targetService)
+            val updated = servicesList.joinToString(":")
+            Settings.Secure.putString(
+                contentResolver,
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+                updated
+            )
+        }
+        Settings.Secure.putInt(contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED, 1)
+    } catch (e: Exception) {
+        android.util.Log.w("BestEdgingPanel", "Could not auto-enable accessibility service: ${e.message}")
+    }
+}
+
+/**
  * Opens a modern color picker with manual Hex input support and visual sliders.
  * Integrated into a seamless Material 3 Dialog using skydoves ColorPickerView.
  */
