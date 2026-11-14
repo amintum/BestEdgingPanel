@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.imi.smartedge.sidebar.panel"
+    namespace = "com.amintum.bestedgingpanel"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.imi.smartedge.sidebar.panel"
+        applicationId = "com.amintum.bestedgingpanel"
         minSdk = 26
         targetSdk = 34
         versionCode = 16
@@ -38,13 +38,16 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -69,6 +72,13 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    applicationVariants.all {
+        outputs.all {
+            val output = this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            output?.outputFileName = "BestEdgingPanel.apk"
+        }
     }
 }
 

@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Smart Edge</string>
+    <string name="app_name">BestEdgingPanel</string>
     <string name="app_picker_title">Choose Apps</string>
-    <string name="settings_title">SidePanel Settings</string>
-    <string name="shortcut_toggle_short">Sidebar</string>
-    <string name="shortcut_toggle_long">Toggle Sidebar</string>
+    <string name="settings_title">BestEdgingPanel Settings</string>
+    <string name="shortcut_toggle_short">BestEdgingPanel</string>
+    <string name="shortcut_toggle_long">Toggle BestEdgingPanel</string>
     <string name="shortcut_screenshot">Take Screenshot</string>
     <string name="shortcut_hub">Open Productivity Hub</string>
-    <string name="panel_running">Smart Edge is active</string>
-    <string name="panel_notification_channel">Smart Edge Service</string>
+    <string name="panel_running">BestEdgingPanel is active</string>
+    <string name="panel_notification_channel">BestEdgingPanel Service</string>
     <string name="panel_notification_desc">Keeps the side panel available over all apps</string>
     <string name="start_panel">Start Panel</string>
     <string name="stop_panel">Stop Panel</string>
@@ -273,7 +273,7 @@
     <string name="action_fix">Fix</string>
     <string name="status_accessibility_required">Accessibility Required</string>
     <string name="dialog_close">Close</string>
-    <string name="setup_welcome_title">Welcome to Smart Edge</string>
+    <string name="setup_welcome_title">Welcome to BestEdgingPanel</string>
     <string name="setup_welcome_subtitle">Fluid and open-source control center</string>
     <string name="setup_section_required">Required</string>
     <string name="setup_overlay_title">Overlay permission</string>
@@ -352,12 +352,12 @@
     <string name="toast_ui_colors_reset">UI Colors Restored to Default</string>
     <string name="toast_accent_locked_origin">Accent color is locked for OriginOS theme</string>
     <string name="toast_bg_locked_origin">Background color is locked for OriginOS theme</string>
-    <string name="hint_search_smart_edge">Search Smart Edge…</string>
+    <string name="hint_search_smart_edge">Search BestEdgingPanel…</string>
     <string name="picker_tab_apps">APPS</string>
     <string name="picker_tab_activities">ACTIVITIES</string>
     <string name="picker_all_apps">All Apps</string>
     <string name="picker_all_activities">All Activities</string>
-    <string name="picker_manage_panel">Manage Smart Edge</string>
+    <string name="picker_manage_panel">Manage BestEdgingPanel</string>
     <string name="picker_btn_edit">EDIT</string>
     <string name="picker_btn_done">DONE</string>
     <string name="picker_active_notifications">Active Notifications</string>

@@ -7,8 +7,8 @@
         android:shortcutShortLabel="@string/shortcut_toggle_short"
         android:shortcutLongLabel="@string/shortcut_toggle_short">
         <intent
-            android:action="com.imi.smartedge.sidebar.panel.TOGGLE"
-            android:targetPackage="com.imi.smartedge.sidebar.panel"
-            android:targetClass="com.imi.smartedge.sidebar.panel.ToggleActivity" />
+            android:action="com.amintum.bestedgingpanel.TOGGLE"
+            android:targetPackage="com.amintum.bestedgingpanel"
+            android:targetClass="com.amintum.bestedgingpanel.ToggleActivity" />
     </shortcut>
 </shortcuts>

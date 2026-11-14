@@ -54,12 +54,22 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name=".LauncherAlias"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
-        </activity>
+        </activity-alias>
 
         <activity
             android:name=".SetupActivity"
@@ -125,10 +135,6 @@
             android:label="@string/settings_title"
             android:theme="@style/Theme.SidePanel.M3" />
 
-        <activity
-            android:name=".SupportActivity"
-            android:label="Support"
-            android:theme="@style/Theme.SidePanel.M3" />
 
         <activity
             android:name=".MiscellaneousSettingsActivity"
@@ -165,7 +171,7 @@
 
         <service
             android:name=".NotificationTrackingService"
-            android:label="Smart Edge Notification Access"
+            android:label="BestEdgingPanel Notification Access"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
             <intent-filter>
