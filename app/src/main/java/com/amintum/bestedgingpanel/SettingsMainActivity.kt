@@ -370,14 +370,6 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
             "feature_auto_show_keyboard"
         ))
         allSettings.add(SettingItem(
-            getString(R.string.interaction_drag_split),
-            "Drag app from sidebar to split screen",
-            catInteraction,
-            "drag split screen multitasking dual window side by side",
-            InteractionSettingsActivity::class.java,
-            "feature_drag_split"
-        ))
-        allSettings.add(SettingItem(
             getString(R.string.interaction_freeform),
             "Launch apps in resizable floating windows",
             catInteraction,
@@ -400,22 +392,6 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
             "custom windowing mode flags activity options bounds",
             InteractionSettingsActivity::class.java,
             "layout_custom_windowing_mode"
-        ))
-        allSettings.add(SettingItem(
-            getString(R.string.freeform_use_shell),
-            "Use Root/Shizuku for launching freeform windows",
-            catInteraction,
-            "freeform shell commands shizuku root adb terminal am start",
-            InteractionSettingsActivity::class.java,
-            "layout_freeform_use_shell"
-        ))
-        allSettings.add(SettingItem(
-            getString(R.string.perm_automation_title),
-            "High-speed Root / Shizuku gesture engine",
-            catInteraction,
-            "automation shizuku root fast gestures native speed input gesture engine",
-            InteractionSettingsActivity::class.java,
-            "btnAutomationSettings"
         ))
         allSettings.add(SettingItem(
             getString(R.string.picker_title_hide),

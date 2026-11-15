@@ -72,7 +72,6 @@ class InteractionSettingsActivity : AppCompatActivity() {
 
         binding.featureGestures.isChecked = panelPrefs.gesturesEnabled
         binding.featureOnlyOnHome.isChecked = panelPrefs.onlyOnHome
-        binding.featureAutomationGestures.isChecked = panelPrefs.useAutomationForGestures
         binding.sbSwipeSensitivity.value = panelPrefs.swipeSensitivity.toFloat()
         binding.tvSwipeSensitivityValue.text = "${panelPrefs.swipeSensitivity}%"
         binding.layoutSwipeSensitivity.visibility = if (panelPrefs.gesturesEnabled) View.VISIBLE else View.GONE
@@ -98,13 +97,9 @@ class InteractionSettingsActivity : AppCompatActivity() {
         binding.featureAutoShowKeyboard.isChecked = panelPrefs.autoShowKeyboard
 
         // 4. MULTITASKING & WINDOWING
-        binding.featureDragSplit.isChecked = panelPrefs.dragToSplit
         binding.featureFreeform.isChecked = panelPrefs.freeformEnabled
         binding.layoutFreeformSize.visibility = if (panelPrefs.freeformEnabled) View.VISIBLE else View.GONE
         binding.layoutCustomWindowingMode.visibility = if (panelPrefs.freeformEnabled) View.VISIBLE else View.GONE
-        binding.layoutFreeformUseShell.visibility = if (panelPrefs.freeformEnabled) View.VISIBLE else View.GONE
-        
-        binding.featureFreeformUseShell.isChecked = panelPrefs.useShellForFreeform
         
         val sizeModeStr = when(panelPrefs.freeformWindowMode) {
             PanelPreferences.FREEFORM_MODE_STANDARD -> "Standard (80%)"
@@ -116,10 +111,7 @@ class InteractionSettingsActivity : AppCompatActivity() {
         binding.tvFreeformSizeValue.text = sizeModeStr
         binding.tvCustomWindowingModeValue.text = "${panelPrefs.freeformWindowingModeInt} ${if (panelPrefs.freeformWindowingModeInt == 5) "(Standard)" else ""}"
 
-        // 5. SHORTCUTS & AUTOMATION
-        binding.featureAutomationGestures.isChecked = panelPrefs.useAutomationForGestures
-
-        // 6. ADVANCED OPTIONS
+        // 5. ADVANCED OPTIONS
         val whitelistCount = panelPrefs.getFullscreenWhitelist().size
         binding.tvFullscreenWhitelistValue.text = if (whitelistCount == 1) getString(R.string.apps_selected_singular) else getString(R.string.apps_selected_plural, whitelistCount)
 
@@ -186,19 +178,6 @@ class InteractionSettingsActivity : AppCompatActivity() {
             applyOnly()
         }
 
-        binding.featureAutomationGestures.setOnCheckedChangeListener { _, isChecked ->
-            panelPrefs.useAutomationForGestures = isChecked
-            applyOnly()
-        }
-
-        findViewById<android.view.View>(R.id.btnAutomationSettings)?.setOnClickListener {
-            SecureSettingsDialog.show(this) {
-                updateSecureSettingsUI()
-                if (AutomationManager.isAutomationPossible()) {
-                    binding.featureAutomationGestures.isChecked = true
-                }
-            }
-        }
 
         binding.sbSwipeSensitivity.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
@@ -283,9 +262,6 @@ class InteractionSettingsActivity : AppCompatActivity() {
             applyOnly()
         }
 
-        binding.featureAddShortcut.setOnClickListener {
-            pinShortcut()
-        }
 
         binding.featureAnimFeel.setOnClickListener {
             val options = arrayOf(getString(R.string.anim_calm), getString(R.string.anim_balanced), getString(R.string.anim_feel_snappy), getString(R.string.anim_instant), getString(R.string.anim_disabled))
@@ -350,12 +326,6 @@ class InteractionSettingsActivity : AppCompatActivity() {
             applyOnly()
         }
 
-        val dragSplitSwitch = findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.feature_drag_split)
-        dragSplitSwitch?.setOnCheckedChangeListener { _, isChecked ->
-            panelPrefs.dragToSplit = isChecked
-            applyOnly()
-        }
-
         val freeformSwitch = findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.feature_freeform)
         val freeformSizeLayout = findViewById<android.view.View>(R.id.layout_freeform_size)
         val tvFreeformSizeValue = findViewById<android.widget.TextView>(R.id.tvFreeformSizeValue)
@@ -364,14 +334,6 @@ class InteractionSettingsActivity : AppCompatActivity() {
             panelPrefs.freeformEnabled = isChecked
             freeformSizeLayout?.visibility = if (isChecked) View.VISIBLE else View.GONE
             binding.layoutCustomWindowingMode.visibility = if (isChecked) View.VISIBLE else View.GONE
-            binding.layoutFreeformUseShell.visibility = if (isChecked) View.VISIBLE else View.GONE
-            applyOnly()
-        }
-
-        binding.layoutFreeformUseShell.setOnClickListener {
-            val newState = !binding.featureFreeformUseShell.isChecked
-            binding.featureFreeformUseShell.isChecked = newState
-            panelPrefs.useShellForFreeform = newState
             applyOnly()
         }
 
@@ -615,40 +577,6 @@ class InteractionSettingsActivity : AppCompatActivity() {
         startService(intent)
     }
 
-    private fun pinShortcut() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            val shortcutManager = getSystemService(android.content.pm.ShortcutManager::class.java)
-            if (shortcutManager.isRequestPinShortcutSupported) {
-                val pinIntent = Intent(this, ToggleActivity::class.java).apply {
-                    action = ToggleActivity.ACTION_TOGGLE
-                }
-                val pinShortcutInfo = android.content.pm.ShortcutInfo.Builder(this, "toggle_sidebar_pinned")
-                    .setShortLabel(getString(R.string.label_toggle_sidebar))
-                    .setIcon(android.graphics.drawable.Icon.createWithResource(this, R.mipmap.ic_launcher))
-                    .setIntent(pinIntent)
-                    .build()
-
-                shortcutManager.requestPinShortcut(pinShortcutInfo, null)
-                Toast.makeText(this, R.string.toast_shortcut_sent, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, R.string.toast_launcher_no_shortcut, Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            // Legacy way for Android < 8.0
-            val shortcutIntent = Intent(this, ToggleActivity::class.java).apply {
-                action = ToggleActivity.ACTION_TOGGLE
-            }
-            val addIntent = Intent().apply {
-                putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent)
-                putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.label_toggle_sidebar))
-                val iconResource = Intent.ShortcutIconResource.fromContext(this@InteractionSettingsActivity, R.mipmap.ic_launcher)
-                putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource)
-                action = "com.android.launcher.action.INSTALL_SHORTCUT"
-            }
-            sendBroadcast(addIntent)
-            Toast.makeText(this, R.string.toast_shortcut_added, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private fun showActionPicker(title: String, current: Int, onSelect: (Int) -> Unit) {
         val options = arrayOf(

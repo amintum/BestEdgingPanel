@@ -772,12 +772,6 @@ class AppPickerPanelView @JvmOverloads constructor(
         @android.annotation.SuppressLint("BlockedPrivateApi")
         private fun launchFreeform(intent: android.content.Intent) {
             val pkg = intent.`package` ?: intent.component?.packageName ?: return
-            
-            // Use Shell Launch engine if enabled and possible
-            if (panelPrefs.useShellForFreeform && AutomationManager.isAutomationPossible()) {
-                val launched = AutomationManager.launchApp(context, pkg, panelPrefs.freeformWindowingModeInt)
-                if (launched) return
-            }
 
             intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
             

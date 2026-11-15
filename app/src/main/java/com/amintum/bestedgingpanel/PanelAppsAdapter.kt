@@ -309,28 +309,9 @@ class PanelAppsAdapter(
                     return@setOnLongClickListener false // Let ItemTouchHelper handle it
                 }
 
-                if (!panelPrefs.dragToSplit) {
-                    if (app.type != AppInfo.Type.TOOL) {
-                        showRemoveConfirmationDialog(app, holder.bindingAdapterPosition)
-                    }
-                    return@setOnLongClickListener true
+                if (app.type != AppInfo.Type.TOOL) {
+                    showRemoveConfirmationDialog(app, holder.bindingAdapterPosition)
                 }
-
-                // Drag to Split Logic
-                if (panelPrefs.hapticEnabled) {
-                    holder.itemView.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
-                }
-                
-                val clipData = android.content.ClipData.newPlainText("pkg", app.packageName)
-                val shadow = View.DragShadowBuilder(holder.ivIcon)
-                
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    holder.itemView.startDragAndDrop(clipData, shadow, app.packageName, 0)
-                } else {
-                    @Suppress("DEPRECATION")
-                    holder.itemView.startDrag(clipData, shadow, app.packageName, 0)
-                }
-                
                 true
             }
         } else if (holder is AddViewHolder) {
@@ -382,16 +363,6 @@ class PanelAppsAdapter(
     @android.annotation.SuppressLint("BlockedPrivateApi")
     private fun launchFreeform(intent: Intent) {
         val pkg = intent.`package` ?: return
-        
-        // Use Shell Launch engine if enabled and possible
-        if (panelPrefs.useShellForFreeform && AutomationManager.isAutomationPossible()) {
-            val launched = AutomationManager.launchApp(context, pkg, panelPrefs.freeformWindowingModeInt)
-            if (launched) {
-                Log.d("PanelAppsAdapter", "Shell launch success: $pkg")
-                return
-            }
-            Log.w("PanelAppsAdapter", "Shell launch failed, falling back to standard launch")
-        }
 
         intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
         

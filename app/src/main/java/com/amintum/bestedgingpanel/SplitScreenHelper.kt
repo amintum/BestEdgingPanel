@@ -19,12 +19,6 @@ object SplitScreenHelper {
 
     fun launchApp(context: Context, packageName: String, mode: Int) {
         val prefs = PanelPreferences(context)
-        
-        // Use Shell Launch engine if enabled and possible for freeform
-        if (mode == WINDOWING_MODE_FREEFORM && prefs.useShellForFreeform && AutomationManager.isAutomationPossible()) {
-            val launched = AutomationManager.launchApp(context, packageName, prefs.freeformWindowingModeInt)
-            if (launched) return
-        }
 
         val pm = context.packageManager
         val launchIntent = pm.getLaunchIntentForPackage(packageName) ?: return
