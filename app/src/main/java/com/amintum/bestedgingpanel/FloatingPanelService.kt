@@ -925,12 +925,16 @@ class FloatingPanelService : Service() {
             panel.alpha = 0f
             panel.translationX = if (fromRight) 1000f else -1000f
             panel.visibility = View.VISIBLE
-            panel.post {
-                val panelWidth = panel.width.toFloat()
-                val fallbackWidth = if (panelWidth > 0f) panelWidth else 600f
-                val startX = if (fromRight) fallbackWidth else -fallbackWidth
-                val stiffness = panelPrefs.animSpeed.toFloat()
+            val stiffness = panelPrefs.animSpeed.toFloat()
+            if (panel.width > 0) {
+                val startX = if (fromRight) panel.width.toFloat() else -panel.width.toFloat()
                 SpringAnimator.animateOpen(panel, startX, stiffness = stiffness)
+            } else {
+                panel.post {
+                    val fallbackWidth = if (panel.width > 0) panel.width.toFloat() else 600f
+                    val startX = if (fromRight) fallbackWidth else -fallbackWidth
+                    SpringAnimator.animateOpen(panel, startX, stiffness = stiffness)
+                }
             }
         }
         edgeHandleView?.visibility = View.GONE

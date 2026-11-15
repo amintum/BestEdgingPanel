@@ -80,6 +80,7 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
         val prefs = getSharedPreferences("side_panel_prefs", Context.MODE_PRIVATE)
         prefs.registerOnSharedPreferenceChangeListener(this)
         updateMasterSwitchUI(panelPrefs.serviceEnabled)
+        ensureServiceRunning()
     }
 
     override fun onPause() {
@@ -98,6 +99,7 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
 
     private fun setupMasterSwitch() {
         updateMasterSwitchUI(panelPrefs.serviceEnabled)
+        ensureServiceRunning()
 
         binding.layoutMasterSwitch.setOnClickListener {
             binding.switchMasterService.toggle()
@@ -108,6 +110,17 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
                 binding.layoutMasterSwitch.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
                 panelPrefs.toggleService(this, isChecked)
                 updateMasterSwitchUI(isChecked)
+            }
+        }
+    }
+
+    private fun ensureServiceRunning() {
+        if (panelPrefs.serviceEnabled && !FloatingPanelService.isRunning) {
+            val serviceIntent = Intent(this, FloatingPanelService::class.java)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent)
+            } else {
+                startService(serviceIntent)
             }
         }
     }

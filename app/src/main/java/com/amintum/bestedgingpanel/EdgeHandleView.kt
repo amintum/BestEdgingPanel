@@ -69,7 +69,6 @@ class EdgeHandleView @JvmOverloads constructor(
 
     private val density = resources.displayMetrics.density
     private val triggerThreshold = 16 * density
-    private val holdDurationMs = 250L
 
     // ── Drag-to-reposition state ──────────────────────────────────────────────
     private var isDragMode = false
@@ -164,15 +163,6 @@ class EdgeHandleView @JvmOverloads constructor(
         }
     }
 
-    private val holdRunnable = Runnable {
-        if (!hasPassedThreshold) return@Runnable
-        isTriggered = true
-        vibrateHaptic()
-        onTrigger?.invoke()
-        if (showPill) {
-            animate().scaleX(1f).scaleY(1f).setDuration(150).start()
-        }
-    }
 
     // ── Tap Detection ─────────────────────────────────────────────────────────
     private var tapCount = 0
@@ -495,7 +485,6 @@ class EdgeHandleView @JvmOverloads constructor(
                         isSlidingSeek = true
                         accumulatedDy = 0f 
                         handler.removeCallbacks(longPressRunnable)
-                        handler.removeCallbacks(holdRunnable)
                         vibrateHaptic(10)
                     }
 
@@ -526,7 +515,6 @@ class EdgeHandleView @JvmOverloads constructor(
                     if (!isScrollingApp && absDyFromStart > triggerThreshold / 2 && absDyFromStart > absDx * 2) {
                         isScrollingApp = true
                         handler.removeCallbacks(longPressRunnable)
-                        handler.removeCallbacks(holdRunnable)
                         if (showPill) {
                             animate().scaleX(1f).scaleY(1f).setDuration(100).start()
                         }
@@ -567,33 +555,19 @@ class EdgeHandleView @JvmOverloads constructor(
 
                 if (!hasPassedThreshold && dx > effectiveThreshold) {
                     hasPassedThreshold = true
+                    isTriggered = true
                     handler.removeCallbacks(longPressRunnable)
-                    
-                    val effectiveHoldTime = if (isGameActive && panelPrefs.deliberateGestureInGames) {
-                        holdDurationMs * 2 
-                    } else {
-                        holdDurationMs
-                    }
-                    
-                    handler.postDelayed(holdRunnable, effectiveHoldTime)
-                    if (showPill) {
-                        animate().scaleX(0.7f).scaleY(0.9f).setDuration(effectiveHoldTime).start()
-                    }
+                    triggerPanel()
                 }
 
-                if (hasPassedThreshold && dx < 4 * density) {
+                if (hasPassedThreshold && !isTriggered && dx < 4 * density) {
                     hasPassedThreshold = false
-                    handler.removeCallbacks(holdRunnable)
-                    if (showPill) {
-                        animate().scaleX(0.85f).scaleY(0.95f).setDuration(80).start()
-                    }
                 }
                 return true
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 isTouchDown = false
-                handler.removeCallbacks(holdRunnable)
                 handler.removeCallbacks(longPressRunnable)
 
                 if (isDragMode) {
