@@ -114,10 +114,46 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
 
     private fun updateMasterSwitchUI(isEnabled: Boolean) {
         binding.switchMasterService.isChecked = isEnabled
-        binding.tvMasterSwitchSubtitle.text = if (isEnabled) {
-            getString(R.string.status_service_active)
+        
+        val typedValue = android.util.TypedValue()
+        if (isEnabled) {
+            // Android 16 Expressive Active State
+            theme.resolveAttribute(com.google.android.material.R.attr.colorPrimaryContainer, typedValue, true)
+            val bgActive = typedValue.data
+            theme.resolveAttribute(com.google.android.material.R.attr.colorOnPrimaryContainer, typedValue, true)
+            val textActive = typedValue.data
+            theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            val primaryColor = typedValue.data
+
+            binding.cardMasterSwitch.setCardBackgroundColor(bgActive)
+            binding.cardMasterSwitch.strokeColor = primaryColor
+            binding.tvMasterSwitchTitle.setTextColor(textActive)
+            binding.tvMasterSwitchSubtitle.setTextColor(textActive)
+            binding.tvMasterSwitchSubtitle.text = getString(R.string.status_service_active)
+
+            binding.cardMasterSwitchIcon.setCardBackgroundColor(primaryColor)
+            theme.resolveAttribute(com.google.android.material.R.attr.colorOnPrimary, typedValue, true)
+            binding.ivMasterSwitchIcon.imageTintList = android.content.res.ColorStateList.valueOf(typedValue.data)
         } else {
-            getString(R.string.status_service_stopped)
+            // Inactive / Stopped State
+            theme.resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainerHigh, typedValue, true)
+            val bgInactive = typedValue.data
+            theme.resolveAttribute(com.google.android.material.R.attr.colorOnSurface, typedValue, true)
+            val textInactive = typedValue.data
+            theme.resolveAttribute(com.google.android.material.R.attr.colorOnSurfaceVariant, typedValue, true)
+            val subtitleInactive = typedValue.data
+            theme.resolveAttribute(com.google.android.material.R.attr.colorOutlineVariant, typedValue, true)
+            val outlineColor = typedValue.data
+
+            binding.cardMasterSwitch.setCardBackgroundColor(bgInactive)
+            binding.cardMasterSwitch.strokeColor = outlineColor
+            binding.tvMasterSwitchTitle.setTextColor(textInactive)
+            binding.tvMasterSwitchSubtitle.setTextColor(subtitleInactive)
+            binding.tvMasterSwitchSubtitle.text = getString(R.string.status_service_stopped)
+
+            theme.resolveAttribute(com.google.android.material.R.attr.colorSurfaceContainerHighest, typedValue, true)
+            binding.cardMasterSwitchIcon.setCardBackgroundColor(typedValue.data)
+            binding.ivMasterSwitchIcon.imageTintList = android.content.res.ColorStateList.valueOf(subtitleInactive)
         }
     }
 

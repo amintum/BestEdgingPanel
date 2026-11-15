@@ -24,4 +24,11 @@
     <dimen name="app_text_size_title">14sp</dimen>
     <dimen name="app_text_size_body">16sp</dimen>
     <dimen name="app_text_size_caption">13sp</dimen>
+
+    <!-- Android 16 Expressive Tokens -->
+    <dimen name="m3_expressive_hero_corner">28dp</dimen>
+    <dimen name="m3_expressive_pod_corner">28dp</dimen>
+    <dimen name="m3_expressive_badge_size">44dp</dimen>
+    <dimen name="m3_expressive_badge_corner">16dp</dimen>
+    <dimen name="m3_expressive_divider_indent">76dp</dimen>
 </resources>

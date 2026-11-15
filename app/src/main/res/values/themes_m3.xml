@@ -92,4 +92,21 @@
         <item name="trackTint">@color/switch_track_colors_m3</item>
         <item name="trackDecorationTint">@color/switch_track_colors_m3</item>
     </style>
+
+    <!-- Android 16 Expressive Shapes & Pod Styles -->
+    <style name="SidePanel.ExpressivePod" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.SidePanel.ExpressivePod</item>
+    </style>
+
+    <style name="ShapeAppearance.SidePanel.ExpressivePod" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="ShapeAppearance.SidePanel.Badge" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerSize">16dp</item>
+    </style>
 </resources>

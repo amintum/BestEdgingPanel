@@ -143,6 +143,9 @@
     <string name="status_service_stopped">Service is Stopped</string>
     <string name="use_edge_panel">Use Edge Panel</string>
     <string name="use_edge_panel_desc">Display floating handle on screen edge</string>
+    <string name="category_personalization">Personalization</string>
+    <string name="category_controls">Controls &amp; Gestures</string>
+    <string name="category_system">System</string>
     <string name="status_automation_stopped">Automation Stopped</string>
     <string name="apps_selected_singular">1 app selected</string>
     <string name="apps_selected_plural">%d apps selected</string>
