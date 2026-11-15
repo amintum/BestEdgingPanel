@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amintum.bestedgingpanel.databinding.ActivitySettingsMainBinding
 import com.amintum.bestedgingpanel.databinding.ItemSearchResultBinding
 
-class SettingsMainActivity : AppCompatActivity() {
+class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivitySettingsMainBinding
     private lateinit var panelPrefs: PanelPreferences
@@ -52,10 +52,11 @@ class SettingsMainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(true)
         binding.toolbar.title = getString(R.string.settings_title)
-        binding.toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         panelPrefs = PanelPreferences(this)
         
+        setupMasterSwitch()
         initializeSettingsList()
         setupSearch()
         setupListeners()
@@ -68,11 +69,56 @@ class SettingsMainActivity : AppCompatActivity() {
                     binding.etSettingsSearch.visibility == View.VISIBLE) {
                     collapseSearch()
                 } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
+                    finish()
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences("side_panel_prefs", Context.MODE_PRIVATE)
+        prefs.registerOnSharedPreferenceChangeListener(this)
+        updateMasterSwitchUI(panelPrefs.serviceEnabled)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val prefs = getSharedPreferences("side_panel_prefs", Context.MODE_PRIVATE)
+        prefs.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: android.content.SharedPreferences?, key: String?) {
+        if (key == "service_enabled") {
+            runOnUiThread {
+                updateMasterSwitchUI(panelPrefs.serviceEnabled)
+            }
+        }
+    }
+
+    private fun setupMasterSwitch() {
+        updateMasterSwitchUI(panelPrefs.serviceEnabled)
+
+        binding.cardMasterSwitch.setOnClickListener {
+            binding.switchMasterService.toggle()
+        }
+
+        binding.switchMasterService.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked != panelPrefs.serviceEnabled) {
+                binding.cardMasterSwitch.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
+                panelPrefs.toggleService(this, isChecked)
+                updateMasterSwitchUI(isChecked)
+            }
+        }
+    }
+
+    private fun updateMasterSwitchUI(isEnabled: Boolean) {
+        binding.switchMasterService.isChecked = isEnabled
+        binding.tvMasterSwitchSubtitle.text = if (isEnabled) {
+            getString(R.string.status_service_active)
+        } else {
+            getString(R.string.status_service_stopped)
+        }
     }
 
     override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {

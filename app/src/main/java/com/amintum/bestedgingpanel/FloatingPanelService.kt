@@ -1227,7 +1227,7 @@ class FloatingPanelService : Service() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val openMainIntent = Intent(this, MainActivity::class.java)
+        val openMainIntent = Intent(this, SettingsMainActivity::class.java)
         val openMainPending = PendingIntent.getActivity(
             this, 0, openMainIntent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
