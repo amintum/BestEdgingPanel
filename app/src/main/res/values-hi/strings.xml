@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BestEdgingPanel</string>
+    <string name="launcher_app_name">BEP</string>
     <string name="app_picker_title">ऐप्स चुनें</string>
     <string name="settings_title">SidePanel सेटिंग्स</string>
     <string name="shortcut_toggle_short">साइडबार</string>
