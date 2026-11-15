@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BestEdgingPanel</string>
     <string name="app_picker_title">Choose Apps</string>
-    <string name="settings_title">BestEdgingPanel Settings</string>
+    <string name="settings_title">Best Edging Panel</string>
     <string name="shortcut_toggle_short">BestEdgingPanel</string>
     <string name="shortcut_toggle_long">Toggle BestEdgingPanel</string>
     <string name="shortcut_screenshot">Take Screenshot</string>
@@ -17,6 +17,7 @@
     <string name="permission_rationale">To show the panel over other apps, please grant the "Display over other apps" permission.</string>
     <string name="remove_from_panel">Remove from Panel</string>
     <string name="add_to_panel">Added to Panel</string>
+    <string name="search">Search</string>
     <string name="search_apps">Search apps…</string>
     <string name="panel_side_label">Panel Side</string>
     <string name="panel_side_right">Right</string>
@@ -141,7 +142,8 @@
     
     <string name="status_service_active">Service is Active</string>
     <string name="status_service_stopped">Service is Stopped</string>
-    <string name="use_edge_panel">Use Edge Panel</string>
+    <string name="use_edge_panel">Turn On/Off Best Edging Panel</string>
+    <string name="turn_on_off_best_edging_panel">Turn On/Off Best Edging Panel</string>
     <string name="use_edge_panel_desc">Display floating handle on screen edge</string>
     <string name="category_personalization">Personalization</string>
     <string name="category_controls">Controls &amp; Gestures</string>

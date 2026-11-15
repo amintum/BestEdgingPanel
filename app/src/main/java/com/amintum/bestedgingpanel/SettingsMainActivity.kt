@@ -66,8 +66,8 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
             override fun handleOnBackPressed() {
                 if (binding.rvSettingsResults.visibility == View.VISIBLE || 
                     binding.layoutSearchEmpty.visibility == View.VISIBLE || 
-                    binding.etSettingsSearch.visibility == View.VISIBLE) {
-                    collapseSearch()
+                    binding.etSettingsSearch.text?.isNotEmpty() == true) {
+                    clearSearch()
                 } else {
                     finish()
                 }
@@ -114,11 +114,6 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
 
     private fun updateMasterSwitchUI(isEnabled: Boolean) {
         binding.switchMasterService.isChecked = isEnabled
-        binding.tvMasterSwitchSubtitle.text = if (isEnabled) {
-            getString(R.string.status_service_active)
-        } else {
-            getString(R.string.status_service_stopped)
-        }
     }
 
     override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
@@ -789,7 +784,7 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
 
             // Smooth delay to allow click animation and clean transition
             itemView.postDelayed({
-                collapseSearch()
+                clearSearch()
                 
                 if (item.targetActivity == SettingsMainActivity::class.java) {
                     if (item.targetId == "btnReset") {
@@ -814,6 +809,16 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
         binding.rvSettingsResults.layoutManager = LinearLayoutManager(this)
         binding.rvSettingsResults.adapter = searchAdapter
 
+        binding.etSettingsSearch.setOnFocusChangeListener { _, hasFocus ->
+            val typedValue = android.util.TypedValue()
+            if (hasFocus) {
+                theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+            } else {
+                theme.resolveAttribute(com.google.android.material.R.attr.colorOutlineVariant, typedValue, true)
+            }
+            binding.searchUnderline.setBackgroundColor(typedValue.data)
+        }
+
         binding.etSettingsSearch.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -823,22 +828,15 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
         })
 
         binding.btnClearSearch.setOnClickListener {
-            binding.etSettingsSearch.setText("")
-        }
-
-        // Setup expansion animation
-        binding.searchCard.setOnClickListener {
-            if (binding.etSettingsSearch.visibility == View.GONE) {
-                expandSearch()
-            }
+            clearSearch()
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         if (binding.rvSettingsResults.visibility == View.VISIBLE || 
             binding.layoutSearchEmpty.visibility == View.VISIBLE ||
-            binding.etSettingsSearch.visibility == View.VISIBLE) {
-            collapseSearch()
+            binding.etSettingsSearch.text?.isNotEmpty() == true) {
+            clearSearch()
             return true
         }
         onBackPressedDispatcher.onBackPressed()
@@ -880,66 +878,13 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
         }
     }
 
-    private fun dpToPx(dp: Int): Int = (dp * resources.displayMetrics.density).toInt()
-
-    private fun expandSearch() {
-        val transition = android.transition.TransitionSet().apply {
-            addTransition(android.transition.ChangeBounds())
-            addTransition(android.transition.Fade())
-            duration = 300
-            interpolator = android.view.animation.DecelerateInterpolator()
-        }
-        
-        android.transition.TransitionManager.beginDelayedTransition(binding.searchCard.parent as ViewGroup, transition)
-        
-        val lp = binding.searchCard.layoutParams as FrameLayout.LayoutParams
-        lp.width = FrameLayout.LayoutParams.MATCH_PARENT
-        lp.setMargins(dpToPx(20), 0, dpToPx(20), 0)
-        binding.searchCard.layoutParams = lp
-
-        val containerLp = binding.searchContainer.layoutParams
-        containerLp.width = ViewGroup.LayoutParams.MATCH_PARENT
-        binding.searchContainer.layoutParams = containerLp
-        
-        binding.tvSearchHint.visibility = View.GONE
-        binding.etSettingsSearch.visibility = View.VISIBLE
-        binding.etSettingsSearch.requestFocus()
-        
-        // Show keyboard
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-        imm.showSoftInput(binding.etSettingsSearch, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
-    }
-
-    private fun collapseSearch() {
-        val transition = android.transition.TransitionSet().apply {
-            addTransition(android.transition.ChangeBounds())
-            addTransition(android.transition.Fade())
-            duration = 250
-            interpolator = android.view.animation.AccelerateInterpolator()
-        }
-        
-        android.transition.TransitionManager.beginDelayedTransition(binding.searchCard.parent as ViewGroup, transition)
-        
+    private fun clearSearch() {
         binding.etSettingsSearch.setText("")
-        binding.etSettingsSearch.visibility = View.GONE
-        binding.btnClearSearch.visibility = View.GONE
-        binding.tvSearchHint.visibility = View.VISIBLE
         binding.etSettingsSearch.clearFocus()
-        
-        val lp = binding.searchCard.layoutParams as FrameLayout.LayoutParams
-        lp.width = FrameLayout.LayoutParams.WRAP_CONTENT
-        lp.setMargins(0, 0, 0, 0)
-        binding.searchCard.layoutParams = lp
-
-        val containerLp = binding.searchContainer.layoutParams
-        containerLp.width = ViewGroup.LayoutParams.WRAP_CONTENT
-        binding.searchContainer.layoutParams = containerLp
-
-        binding.layoutSearchEmpty.visibility = View.GONE
         binding.rvSettingsResults.visibility = View.GONE
+        binding.layoutSearchEmpty.visibility = View.GONE
         binding.settingsCategoriesContainer.visibility = View.VISIBLE
-
-        // Hide keyboard
+        binding.layoutMasterSwitch.visibility = View.VISIBLE
         val imm = getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(binding.etSettingsSearch.windowToken, 0)
     }
@@ -953,6 +898,7 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
             binding.rvSettingsResults.visibility = View.GONE
             binding.layoutSearchEmpty.visibility = View.GONE
             binding.settingsCategoriesContainer.visibility = View.VISIBLE
+            binding.layoutMasterSwitch.visibility = View.VISIBLE
             return
         }
 
@@ -964,6 +910,7 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
         }
 
         binding.settingsCategoriesContainer.visibility = View.GONE
+        binding.layoutMasterSwitch.visibility = View.GONE
         if (filtered.isEmpty()) {
             binding.rvSettingsResults.visibility = View.GONE
             binding.layoutSearchEmpty.visibility = View.VISIBLE

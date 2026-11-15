@@ -31,4 +31,10 @@
     <dimen name="m3_expressive_badge_size">44dp</dimen>
     <dimen name="m3_expressive_badge_corner">16dp</dimen>
     <dimen name="m3_expressive_divider_indent">76dp</dimen>
+    <!-- Compact & Balanced Switch Dimensions across all pages -->
+    <dimen name="m3_comp_switch_track_width">42dp</dimen>
+    <dimen name="m3_comp_switch_track_height">24dp</dimen>
+    <dimen name="mtrl_switch_track_width">42dp</dimen>
+    <dimen name="mtrl_switch_track_height">24dp</dimen>
+    <dimen name="mtrl_switch_thumb_size">24dp</dimen>
 </resources>
