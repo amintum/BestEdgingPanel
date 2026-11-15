@@ -14,7 +14,7 @@ android {
         applicationId = "com.amintum.bestedgingpanel"
         minSdk = 26
         targetSdk = 34
-        versionCode = 21
+        versionCode = 23
         versionName = "1.3.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

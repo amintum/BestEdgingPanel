@@ -186,22 +186,7 @@ class InteractionSettingsActivity : AppCompatActivity() {
             applyOnly()
         }
 
-        binding.featureAutomationGestures.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked && !AutomationManager.isAutomationPossible()) {
-                AutomationManager.checkRootAndRequestPermission(this) { success ->
-                    runOnUiThread {
-                        if (success) {
-                            panelPrefs.useAutomationForGestures = true
-                            buttonView.isChecked = true
-                            applyOnly()
-                        } else {
-                            buttonView.isChecked = false
-                            showAutomationSetupDialog(buttonView)
-                        }
-                    }
-                }
-                return@setOnCheckedChangeListener
-            }
+        binding.featureAutomationGestures.setOnCheckedChangeListener { _, isChecked ->
             panelPrefs.useAutomationForGestures = isChecked
             applyOnly()
         }
@@ -384,14 +369,6 @@ class InteractionSettingsActivity : AppCompatActivity() {
         }
 
         binding.layoutFreeformUseShell.setOnClickListener {
-            if (!AutomationManager.isAutomationPossible()) {
-                com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.dialog_permission_required)
-                    .setMessage(R.string.dialog_native_shell_desc)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
-                return@setOnClickListener
-            }
             val newState = !binding.featureFreeformUseShell.isChecked
             binding.featureFreeformUseShell.isChecked = newState
             panelPrefs.useShellForFreeform = newState

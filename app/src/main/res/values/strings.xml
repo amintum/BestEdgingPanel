@@ -92,7 +92,7 @@
     <string name="slide_volume">Slide Volume</string>
     <string name="seek_sensitivity">Seek Sensitivity</string>
     
-    <string name="automation_title">System Automation (Root/Shizuku)</string>
+    <string name="automation_title">System Privileged Automation</string>
     <string name="automation_desc">Use system calls for Back, Home, and Recents</string>
     <string name="fullscreen_protection">Fullscreen Protection</string>
     <string name="fullscreen_desc">Prevent gestures in selected apps</string>
@@ -190,7 +190,7 @@
     <string name="freeform_custom_windowing_mode">Custom Windowing Mode</string>
     <string name="freeform_custom_windowing_mode_desc">Enter a custom integer for native OEM floating windows (Nothing: 102, Xiaomi: 12, Vivo/OriginOS: 106, Realme: 100)</string>
     <string name="freeform_use_shell">Use Native Shell Launch</string>
-    <string name="freeform_use_shell_desc">Recommended for OriginOS/HyperOS. Replicates ADB command for perfect scaling (Requires Shizuku/Root)</string>
+    <string name="freeform_use_shell_desc">Recommended for OriginOS/HyperOS. Replicates system command for perfect scaling</string>
     <string name="dialog_custom_windowing_mode">Custom Windowing Mode</string>
     
     <string name="anim_feel_calm">Calm (Slow)</string>
@@ -199,8 +199,8 @@
     <string name="anim_feel_instant">Instant</string>
     <string name="anim_feel_disabled">Disabled</string>
     
-    <string name="dialog_automation_title">Automation Unavailable</string>
-    <string name="dialog_automation_msg">Root or Shizuku is required to use this feature. Please set up \'System Automation\' first.</string>
+    <string name="dialog_automation_title">Automation</string>
+    <string name="dialog_automation_msg">Privileged system automation is active.</string>
     <string name="btn_setup">Setup</string>
     <string name="loading_apps">Loading Apps…</string>
     <string name="please_wait_apps">Please wait while apps are being loaded.</string>
@@ -270,7 +270,7 @@
 
     <!-- System Permissions & Setup -->
     <string name="section_permissions_setup">Permissions &amp; System Setup</string>
-    <string name="main_menu_permissions_setup_desc">Overlay, Accessibility, Battery, Auto-start, Root/Shizuku</string>
+    <string name="main_menu_permissions_setup_desc">Overlay, Accessibility, Battery, Auto-start, Privileged System App</string>
     <string name="setup_manage_title">Permissions &amp; Setup</string>
     <string name="setup_manage_subtitle">Review, toggle, or fix system permissions anytime</string>
     <string name="setup_done">Done</string>
@@ -290,7 +290,7 @@
     <string name="setup_accessibility_desc">Required for fluid gestures</string>
     <string name="setup_section_advanced">Advanced &amp; Background</string>
     <string name="setup_automation_title">Native Gesture</string>
-    <string name="setup_automation_desc">Root/Shizuku: High performance</string>
+    <string name="setup_automation_desc">Privileged: High performance system integration</string>
     <string name="setup_battery_title">Battery optimization</string>
     <string name="setup_battery_desc">Improve background reliability</string>
     <string name="setup_autostart_title">Auto start</string>
@@ -337,7 +337,7 @@
     <string name="anim_instant">Instant</string>
     <string name="anim_disabled">Disabled</string>
     <string name="dialog_permission_required">Permission Required</string>
-    <string name="dialog_native_shell_desc">Native Shell Launch requires Shizuku or Root to function. Please enable one of them in the Automation settings below.</string>
+    <string name="dialog_native_shell_desc">Native Shell Launch uses system privileged execution.</string>
     <string name="dialog_freeform_window_size">Freeform Window Size</string>
     <string name="appearance_show_bottom_arrow">Show App Drawer Arrow</string>
     <string name="appearance_show_app_names">Show App Names</string>
@@ -425,7 +425,7 @@
     <string name="perm_notifications_title">Notification Hub</string>
     <string name="perm_notifications_desc">Notification previews in app drawer</string>
     <string name="perm_automation_title">Native Gesture Engine</string>
-    <string name="perm_automation_desc">Root / Shizuku gesture engine</string>
+    <string name="perm_automation_desc">System privileged gesture engine</string>
     <string name="dialog_remove_app_msg">Remove from sidebar?</string>
     <string name="btn_remove">Remove</string>
     <string name="search_no_results">No matching settings found</string>

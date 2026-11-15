@@ -159,7 +159,7 @@ class PanelPreferences(context: Context) {
         val DEFAULT_SIDE = SIDE_RIGHT
         const val DEFAULT_AUTO_START = true
         const val DEFAULT_SHOW_PILL = true
-        const val DEFAULT_HAPTIC = true
+        const val DEFAULT_HAPTIC = false
         const val DEFAULT_OPACITY = 100
         const val DEFAULT_HANDLE_HEIGHT = 80
         const val DEFAULT_HANDLE_WIDTH = 32
@@ -432,7 +432,7 @@ class PanelPreferences(context: Context) {
             putBoolean(KEY_USE_AUTOMATION_FOR_GESTURES, false)
             putString(KEY_HOME_BUTTON_STYLE, DEFAULT_HOME_BUTTON_STYLE)
             putInt(KEY_THEME_MODE, DEFAULT_THEME_MODE)
-            putBoolean(KEY_FREEFORM_ENABLED, false)
+            putBoolean(KEY_FREEFORM_ENABLED, true)
             putString(KEY_FREEFORM_WINDOW_MODE, FREEFORM_MODE_STANDARD)
             putInt(KEY_FREEFORM_WINDOWING_MODE_INT, 5)
             putBoolean(KEY_USE_SHELL_FOR_FREEFORM, false)
@@ -446,7 +446,8 @@ class PanelPreferences(context: Context) {
             putBoolean(KEY_SHOW_APP_NAMES_MASTER, true)
             putBoolean(KEY_SHOW_APP_NAMES, true)
             putBoolean(KEY_SHOW_APP_NAMES_DRAWER, true)
-            putBoolean(KEY_DRAG_TO_SPLIT, true)
+            putBoolean(KEY_DRAG_TO_SPLIT, false)
+            putBoolean(KEY_STEALTH_MODE, true)
             putBoolean(KEY_REMEMBER_SCROLL, false)
             putBoolean(KEY_AUTO_SHOW_KEYBOARD, false)
             putString(KEY_PANEL_APPS, "")
@@ -468,7 +469,7 @@ class PanelPreferences(context: Context) {
         set(value) = prefs.edit { putBoolean(KEY_AUTO_SHOW_KEYBOARD, value) }
 
     var stealthMode: Boolean
-        get() = prefs.getBoolean(KEY_STEALTH_MODE, false)
+        get() = prefs.getBoolean(KEY_STEALTH_MODE, true)
         set(value) = prefs.edit { putBoolean(KEY_STEALTH_MODE, value) }
 
     var rememberScroll: Boolean
@@ -484,7 +485,7 @@ class PanelPreferences(context: Context) {
         set(value) = prefs.edit { putInt(KEY_PICKER_SCROLL, value) }
 
     var dragToSplit: Boolean
-        get() = prefs.getBoolean(KEY_DRAG_TO_SPLIT, true)
+        get() = prefs.getBoolean(KEY_DRAG_TO_SPLIT, false)
         set(value) = prefs.edit { putBoolean(KEY_DRAG_TO_SPLIT, value) }
 
     var showNotificationApps: Boolean
@@ -504,7 +505,7 @@ class PanelPreferences(context: Context) {
         set(value) = prefs.edit { putString(KEY_PILL_COLOR, value) }
 
     var freeformEnabled: Boolean
-        get() = prefs.getBoolean(KEY_FREEFORM_ENABLED, false)
+        get() = prefs.getBoolean(KEY_FREEFORM_ENABLED, true)
         set(value) = prefs.edit { putBoolean(KEY_FREEFORM_ENABLED, value) }
 
     var freeformWindowMode: String

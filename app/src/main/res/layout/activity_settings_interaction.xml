@@ -330,27 +330,13 @@
                         android:paddingVertical="8dp"
                         android:visibility="gone">
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/freeform_use_shell"
-                                android:textColor="?attr/colorOnSurface"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="@string/freeform_use_shell_desc"
-                                android:textColor="?attr/colorOnSurfaceVariant"
-                                android:textSize="12sp" />
-                        </LinearLayout>
+                            android:text="@string/freeform_use_shell"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="16sp" />
 
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:id="@+id/feature_freeform_use_shell"

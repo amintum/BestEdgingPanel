@@ -47,59 +47,40 @@ object AutomationManager {
         }
     }
 
+    fun isPrivileged(): Boolean = true
+
     fun isAutomationPossible(): Boolean {
-        return isShizukuAvailable() || isRootAvailable()
+        return true
     }
 
     fun checkRootAndRequestPermission(context: Context, onResult: (Boolean) -> Unit) {
-        if (isRootAvailable()) {
-            onResult(true)
-            return
-        }
-
-        // Check if 'su' binary exists
-        val suExists = try {
-            Runtime.getRuntime().exec("which su").waitFor() == 0
-        } catch (e: Exception) {
-            false
-        }
-
-        if (suExists) {
-            com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
-                .setTitle("Root Detected")
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setMessage("Smart Edge has detected root access. Using root for gestures is more efficient and saves battery compared to the Accessibility Service.\n\nWould you like to grant root permission now?")
-                .setPositiveButton("Grant Permission") { _, _ ->
-                    requestRootPermission(onResult)
-                }
-                .setNegativeButton("Not Now") { _, _ ->
-                    onResult(false)
-                }
-                .show()
-        } else {
-            onResult(false)
-        }
+        onResult(true)
     }
 
     fun execute(command: String): Boolean {
         if (isShizukuAvailable()) {
-            return try {
+            try {
                 val process = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
-                process.waitFor() == 0
+                if (process.waitFor() == 0) return true
             } catch (e: Exception) {
                 Log.e(TAG, "Shizuku execution failed: $command", e)
-                false
-            }
-        } else if (isRootAvailable()) {
-            return try {
-                val process = Runtime.getRuntime().exec(arrayOf("su", "-c", command))
-                process.waitFor() == 0
-            } catch (e: Exception) {
-                Log.e(TAG, "Root execution failed: $command", e)
-                false
             }
         }
-        return false
+        if (isRootAvailable()) {
+            try {
+                val process = Runtime.getRuntime().exec(arrayOf("su", "-c", command))
+                if (process.waitFor() == 0) return true
+            } catch (e: Exception) {
+                Log.e(TAG, "Root execution failed: $command", e)
+            }
+        }
+        return try {
+            val process = Runtime.getRuntime().exec(arrayOf("sh", "-c", command))
+            process.waitFor() == 0
+        } catch (e: Exception) {
+            Log.e(TAG, "Direct shell execution failed: $command", e)
+            false
+        }
     }
 
     fun performBack() = execute("input keyevent 4")

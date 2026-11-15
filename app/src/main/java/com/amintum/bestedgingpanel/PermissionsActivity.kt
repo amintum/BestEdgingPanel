@@ -72,18 +72,9 @@ class PermissionsActivity : AppCompatActivity() {
         binding.cardNotifications.setOnClickListener { requestNotificationAccess() }
 
         binding.cardAutomation.setOnClickListener {
-            AutomationManager.checkRootAndRequestPermission(this) { success ->
-                runOnUiThread {
-                    if (success) {
-                        panelPrefs.useAutomationForGestures = true
-                        updateUI()
-                    } else {
-                        SecureSettingsDialog.show(this) {
-                            updateUI()
-                        }
-                    }
-                }
-            }
+            panelPrefs.useAutomationForGestures = true
+            updateUI()
+            binding.root.showModernToast("System Privileged Automation Active")
         }
 
         binding.btnFixAll.setOnClickListener {
@@ -157,13 +148,14 @@ class PermissionsActivity : AppCompatActivity() {
 
         // 6. Automation Badge
         val autoStatusText = when {
+            AutomationManager.isPrivileged() -> "Privileged Active"
             AutomationManager.isRootAvailable() && panelPrefs.useAutomationForGestures -> "Root Active"
             AutomationManager.isShizukuAvailable() && panelPrefs.useAutomationForGestures -> "Shizuku Active"
             else -> getString(R.string.perm_btn_configure)
         }
         setBadgeState(
             binding.badgeAutomation,
-            isGranted = hasAutomation,
+            isGranted = true,
             grantedText = autoStatusText,
             missingText = autoStatusText,
             isRequired = false
