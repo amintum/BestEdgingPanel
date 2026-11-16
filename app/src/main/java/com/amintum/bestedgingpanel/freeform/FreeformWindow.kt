@@ -1,18 +1,21 @@
 package com.amintum.bestedgingpanel.freeform
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.graphics.SurfaceTexture
 import android.hardware.display.VirtualDisplay
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Display
 import android.view.GestureDetector
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.Surface
@@ -63,6 +66,9 @@ class FreeformWindow(
     private var virtualDisplay: VirtualDisplay? = null
     private var surface: Surface? = null
     private var isDestroyed = false
+    private var splashView: ImageView? = null
+    private var hasRenderedFirstFrame = false
+    private var subscreenDepth = 0
 
     private val hangUpGestureListener = HangUpGestureListener(this)
 
@@ -148,8 +154,28 @@ class FreeformWindow(
             }
             freeformRootView.addView(freeformView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
+            // Centered splash placeholder icon to prevent any transparent flash during launch
+            splashView = ImageView(context).apply {
+                try {
+                    val appInfo = context.packageManager.getApplicationInfo(freeformConfig.packageName, 0)
+                    setImageDrawable(context.packageManager.getApplicationIcon(appInfo))
+                } catch (_: Exception) {}
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                alpha = 0.35f
+            }
+            val splashLp = FrameLayout.LayoutParams(context.dpToPx(56), context.dpToPx(56), Gravity.CENTER)
+            freeformRootView.addView(splashView, splashLp)
+
             freeformLayout.isFocusable = true
             freeformLayout.isFocusableInTouchMode = true
+            freeformLayout.setOnKeyListener { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                    injectBackKey()
+                    true
+                } else {
+                    false
+                }
+            }
             freeformView.isFocusable = true
             freeformView.isFocusableInTouchMode = true
 
@@ -276,7 +302,28 @@ class FreeformWindow(
         return true
     }
 
-    override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {}
+    override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {
+        if (!hasRenderedFirstFrame) {
+            hasRenderedFirstFrame = true
+            splashView?.let { splash ->
+                splash.animate()
+                    .alpha(0f)
+                    .setDuration(120)
+                    .withEndAction {
+                        try {
+                            freeformRootView.removeView(splash)
+                        } catch (_: Exception) {}
+                        splashView = null
+                    }
+                    .start()
+            }
+        }
+    }
+
+    fun onUserTappedInsideApp() {
+        subscreenDepth = (subscreenDepth + 1).coerceAtMost(8)
+        Log.d(TAG, "onUserTappedInsideApp: subscreenDepth=$subscreenDepth")
+    }
 
     private fun launchTargetAppOnDisplay(displayId: Int) {
         try {
@@ -299,10 +346,19 @@ class FreeformWindow(
         FreeformDisplayManager.resizeDisplay(virtualDisplay, width, height, densityDpi)
     }
 
+    fun canNavigateBack(): Boolean {
+        return subscreenDepth > 0
+    }
+
     fun injectBackKey() {
-        if (freeformConfig.displayId >= 0) {
-            FreeformInputTouchListener.injectBackKey(context, freeformConfig.displayId)
+        if (freeformConfig.displayId < 0) return
+        if (!canNavigateBack()) {
+            Log.d(TAG, "injectBackKey: Already on first screen (subscreenDepth=$subscreenDepth). Doing nothing.")
+            return
         }
+        subscreenDepth--
+        Log.d(TAG, "injectBackKey: Injecting back key, remaining subscreenDepth=$subscreenDepth")
+        FreeformInputTouchListener.injectBackKey(context, freeformConfig.displayId)
     }
 
     fun maximizeApp() {

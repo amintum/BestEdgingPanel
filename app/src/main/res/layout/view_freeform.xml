@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="@android:color/transparent">
+    app:cardBackgroundColor="#FF18191E">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -93,6 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:tag="freeform_root"
+            android:background="#FF18191E"
             app:layout_constraintBottom_toTopOf="@+id/bottomBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

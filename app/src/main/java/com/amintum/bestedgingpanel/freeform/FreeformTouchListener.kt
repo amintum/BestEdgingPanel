@@ -133,6 +133,10 @@ class FreeformInputTouchListener(
     private val window: FreeformWindow
 ) : View.OnTouchListener {
     private val inputManager = context.getSystemService(Context.INPUT_SERVICE) as? InputManager
+    private var downX = 0f
+    private var downY = 0f
+    private var isTapCandidate = false
+    private val touchSlop = 20f
 
     companion object {
         private const val TAG = "FreeformTouchListener"
@@ -185,8 +189,25 @@ class FreeformInputTouchListener(
         val displayId = window.freeformConfig.displayId
         if (displayId < 0 || inputManager == null) return false
 
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            view.requestFocus()
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                view.requestFocus()
+                downX = event.x
+                downY = event.y
+                isTapCandidate = true
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val dx = kotlin.math.abs(event.x - downX)
+                val dy = kotlin.math.abs(event.y - downY)
+                if (dx > touchSlop || dy > touchSlop) {
+                    isTapCandidate = false
+                }
+            }
+            MotionEvent.ACTION_UP -> {
+                if (isTapCandidate) {
+                    window.onUserTappedInsideApp()
+                }
+            }
         }
 
         val pointerCoords = Array(event.pointerCount) { i ->
