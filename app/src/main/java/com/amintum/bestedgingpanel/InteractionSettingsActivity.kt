@@ -98,7 +98,7 @@ class InteractionSettingsActivity : AppCompatActivity() {
 
         // 4. MULTITASKING & WINDOWING
         binding.featureFreeform.isChecked = panelPrefs.freeformEnabled
-        binding.layoutFreeformSize.visibility = if (panelPrefs.freeformEnabled) View.VISIBLE else View.GONE
+        binding.layoutFreeformSize.visibility = View.GONE
         binding.layoutCustomWindowingMode.visibility = if (panelPrefs.freeformEnabled) View.VISIBLE else View.GONE
         
         val sizeModeStr = when(panelPrefs.freeformWindowMode) {
@@ -332,7 +332,7 @@ class InteractionSettingsActivity : AppCompatActivity() {
         
         freeformSwitch?.setOnCheckedChangeListener { _, isChecked ->
             panelPrefs.freeformEnabled = isChecked
-            freeformSizeLayout?.visibility = if (isChecked) View.VISIBLE else View.GONE
+            freeformSizeLayout?.visibility = View.GONE
             binding.layoutCustomWindowingMode.visibility = if (isChecked) View.VISIBLE else View.GONE
             applyOnly()
         }

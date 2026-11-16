@@ -127,6 +127,7 @@ class FloatingPanelService : Service() {
         const val ACTION_LAUNCH_CAMERA = "com.amintum.bestedgingpanel.LAUNCH_CAMERA"
         const val ACTION_TOGGLE_ROTATION = "com.amintum.bestedgingpanel.TOGGLE_ROTATION"
         const val ACTION_OPEN_FAV_APP = "com.amintum.bestedgingpanel.OPEN_FAV_APP"
+        const val ACTION_LAUNCH_FREEFORM = "com.amintum.bestedgingpanel.LAUNCH_FREEFORM"
     }
 
     override fun onCreate() {
@@ -337,6 +338,12 @@ class FloatingPanelService : Service() {
             ACTION_LAUNCH_CAMERA -> launchCamera()
             ACTION_TOGGLE_ROTATION -> toggleAutoRotation()
             ACTION_OPEN_FAV_APP -> openFavoriteApp()
+            ACTION_LAUNCH_FREEFORM -> {
+                val targetPkg = intent.getStringExtra("package_name")
+                if (targetPkg != null) {
+                    com.amintum.bestedgingpanel.freeform.FreeformWindowManager.launchApp(this, targetPkg)
+                }
+            }
         }
         return if (panelPrefs.serviceEnabled) START_STICKY else START_NOT_STICKY
     }

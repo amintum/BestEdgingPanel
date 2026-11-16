@@ -362,6 +362,19 @@ class PanelAppsAdapter(
 
     @android.annotation.SuppressLint("BlockedPrivateApi")
     private fun launchFreeform(intent: Intent) {
+        val targetPkg = intent.`package` ?: intent.component?.packageName
+        if (targetPkg != null) {
+            try {
+                Log.d("PanelAppsAdapter", "Routing launch to FreeformWindowManager: $targetPkg")
+                val window = com.amintum.bestedgingpanel.freeform.FreeformWindowManager.launchApp(context, targetPkg)
+                if (window != null) {
+                    return
+                }
+            } catch (e: Exception) {
+                Log.e("PanelAppsAdapter", "FreeformWindowManager launch error, falling back", e)
+            }
+        }
+
         val pkg = intent.`package` ?: return
 
         intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)

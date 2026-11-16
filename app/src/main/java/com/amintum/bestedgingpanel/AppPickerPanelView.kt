@@ -771,6 +771,19 @@ class AppPickerPanelView @JvmOverloads constructor(
 
         @android.annotation.SuppressLint("BlockedPrivateApi")
         private fun launchFreeform(intent: android.content.Intent) {
+            val targetPkg = intent.`package` ?: intent.component?.packageName
+            if (targetPkg != null) {
+                try {
+                    android.util.Log.d("AppPickerPanelView", "Routing launch to FreeformWindowManager: $targetPkg")
+                    val window = com.amintum.bestedgingpanel.freeform.FreeformWindowManager.launchApp(context, targetPkg)
+                    if (window != null) {
+                        return
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("AppPickerPanelView", "FreeformWindowManager launch error, falling back", e)
+                }
+            }
+
             val pkg = intent.`package` ?: intent.component?.packageName ?: return
 
             intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)

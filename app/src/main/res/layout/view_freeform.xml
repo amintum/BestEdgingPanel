@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@android:color/transparent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Top Header Bar -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/topBarView"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:background="@drawable/color_background"
+            android:tag="topBarView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/freeform_app_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="12dp"
+                android:contentDescription="App Icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/freeform_app_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#F0FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_back"
+                app:layout_constraintStart_toEndOf="@+id/freeform_app_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_freeform_header_button"
+                android:contentDescription="Back"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="#EEFFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_maximize"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btn_maximize"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_freeform_header_button"
+                android:contentDescription="Maximize"
+                android:src="@drawable/ic_freeform_maximize"
+                app:tint="#EEFFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_close"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btn_close"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_freeform_header_button"
+                android:contentDescription="Close"
+                android:src="@drawable/ic_clear"
+                app:tint="#EEFFFFFF"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Middle Freeform Content Container -->
+        <FrameLayout
+            android:id="@+id/freeform_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="freeform_root"
+            app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topBarView" />
+
+        <!-- Bottom Bar with Dual Corner Handles and Center Drag Pill -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottomBar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/bottom_bar_height"
+            android:background="@drawable/color_background"
+            android:tag="bottomBarView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Bottom Left Corner Resize Handle -->
+            <LinearLayout
+                android:id="@+id/leftScale"
+                android:layout_width="@dimen/scale_width"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:tag="leftScaleView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="4dp"
+                    android:background="@drawable/bar_corners_bg" />
+            </LinearLayout>
+
+            <!-- Center Bottom Move/Drag Handle -->
+            <LinearLayout
+                android:id="@+id/middleView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:tag="middleView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/rightScale"
+                app:layout_constraintStart_toEndOf="@+id/leftScale"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:layout_width="48dp"
+                    android:layout_height="2dp"
+                    android:background="@drawable/bar_corners_bg" />
+            </LinearLayout>
+
+            <!-- Bottom Right Corner Resize Handle -->
+            <LinearLayout
+                android:id="@+id/rightScale"
+                android:layout_width="@dimen/scale_width"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:tag="rightScaleView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="4dp"
+                    android:background="@drawable/bar_corners_bg" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

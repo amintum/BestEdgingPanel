@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/freeform_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false">
+
+    <!-- Main Window Container with outline clipping for rounded corners -->
+    <LinearLayout
+        android:id="@+id/freeform_window_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/bg_freeform_frame"
+        android:clipToOutline="true">
+
+        <!-- Top Header Bar -->
+        <LinearLayout
+            android:id="@+id/freeform_header_bar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:background="#26FFFFFF">
+
+            <ImageView
+                android:id="@+id/freeform_app_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="App Icon" />
+
+            <TextView
+                android:id="@+id/freeform_app_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#EEFFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/freeform_btn_back"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="#CCFFFFFF"
+                android:contentDescription="Back" />
+
+            <ImageButton
+                android:id="@+id/freeform_btn_maximize"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_freeform_maximize"
+                android:tint="#CCFFFFFF"
+                android:contentDescription="Maximize" />
+
+            <ImageButton
+                android:id="@+id/freeform_btn_close"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_clear"
+                android:tint="#CCFFFFFF"
+                android:contentDescription="Close" />
+        </LinearLayout>
+
+        <!-- Display TextureView Container -->
+        <FrameLayout
+            android:id="@+id/freeform_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextureView
+                android:id="@+id/freeform_texture_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Left Bottom Corner Resize Handle Zone -->
+    <View
+        android:id="@+id/freeform_corner_left_bottom"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|start" />
+
+    <!-- Right Bottom Corner Resize Handle Zone -->
+    <View
+        android:id="@+id/freeform_corner_right_bottom"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|end" />
+
+</FrameLayout>
