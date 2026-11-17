@@ -77,10 +77,20 @@ class SettingsMainActivity : AppCompatActivity(), android.content.SharedPreferen
 
     override fun onResume() {
         super.onResume()
+        if (panelPrefs.themeMode == PanelPreferences.MODE_SYSTEM) {
+            applyAppTheme(this)
+        }
         val prefs = getSharedPreferences("side_panel_prefs", Context.MODE_PRIVATE)
         prefs.registerOnSharedPreferenceChangeListener(this)
         updateMasterSwitchUI(panelPrefs.serviceEnabled)
         ensureServiceRunning()
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (panelPrefs.themeMode == PanelPreferences.MODE_SYSTEM) {
+            applyAppTheme(this)
+        }
     }
 
     override fun onPause() {

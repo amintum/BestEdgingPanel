@@ -15,6 +15,9 @@ import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.Bundle
+import android.app.UiModeManager
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.provider.Settings
 import java.lang.reflect.Method
 
@@ -456,6 +459,37 @@ fun Context.dpToPx(dp: Int): Int {
 }
 
 /**
+ * Checks whether the device system is currently in Dark Theme.
+ * Reliably inspects UiModeManager (API 29+), Settings.Secure, and system configuration.
+ */
+fun isSystemInDarkMode(context: Context): Boolean {
+    // 1. Check UiModeManager (the official system service controlling Night Mode in Android 10+)
+    val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as? UiModeManager
+    if (uiModeManager != null) {
+        when (uiModeManager.nightMode) {
+            UiModeManager.MODE_NIGHT_YES -> return true
+            UiModeManager.MODE_NIGHT_NO -> return false
+        }
+    }
+
+    // 2. Check Settings.Secure (underlying global toggle for dark mode across AOSP/GSIs)
+    try {
+        val secureNight = Settings.Secure.getInt(context.contentResolver, "ui_night_mode", -1)
+        if (secureNight == 2) return true // 2 = MODE_NIGHT_YES
+        if (secureNight == 1) return false // 1 = MODE_NIGHT_NO
+    } catch (_: Exception) {}
+
+    // 3. Check System Configuration
+    val sysUiMode = Resources.getSystem().configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    if (sysUiMode == Configuration.UI_MODE_NIGHT_YES) return true
+    if (sysUiMode == Configuration.UI_MODE_NIGHT_NO) return false
+
+    // 4. Check Context Configuration
+    val ctxUiMode = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    return ctxUiMode == Configuration.UI_MODE_NIGHT_YES
+}
+
+/**
  * Applies the selected theme mode (System, Light, Dark) to the application.
  */
 fun applyAppTheme(context: Context) {
@@ -463,7 +497,13 @@ fun applyAppTheme(context: Context) {
     val mode = when (prefs.themeMode) {
         PanelPreferences.MODE_LIGHT -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
         PanelPreferences.MODE_DARK -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
-        else -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        else -> {
+            if (isSystemInDarkMode(context)) {
+                androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+            }
+        }
     }
     androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(mode)
 }

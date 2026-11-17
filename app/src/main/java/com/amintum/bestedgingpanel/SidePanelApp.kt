@@ -10,6 +10,14 @@ class SidePanelApp : Application() {
         super.attachBaseContext(LocaleHelper.onAttach(base))
     }
 
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val prefs = PanelPreferences(this)
+        if (prefs.themeMode == PanelPreferences.MODE_SYSTEM) {
+            applyAppTheme(this)
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         

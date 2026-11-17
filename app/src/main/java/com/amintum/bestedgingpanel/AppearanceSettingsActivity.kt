@@ -37,6 +37,20 @@ class AppearanceSettingsActivity : AppCompatActivity() {
         handleDeepLink()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (panelPrefs.themeMode == PanelPreferences.MODE_SYSTEM) {
+            applyAppTheme(this)
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (panelPrefs.themeMode == PanelPreferences.MODE_SYSTEM) {
+            applyAppTheme(this)
+        }
+    }
+
     private fun handleDeepLink() {
         val targetId = intent.getStringExtra(SettingsMainActivity.EXTRA_SCROLL_TO) ?: return
         if (targetId == "layout_show_app_names_sidebar" || targetId == "layout_show_app_names_drawer") {
