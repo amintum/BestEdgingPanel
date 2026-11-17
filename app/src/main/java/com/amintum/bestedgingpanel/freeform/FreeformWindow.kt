@@ -233,7 +233,7 @@ class FreeformWindow(
 
         if (vd == null || vd.display == null) {
             Log.e(TAG, "Failed to create virtual display")
-            destroy("createDisplay failed")
+            destroy("createDisplay failed", removeTask = false)
             return
         }
 
@@ -329,11 +329,15 @@ class FreeformWindow(
         try {
             val intent = context.packageManager.getLaunchIntentForPackage(freeformConfig.packageName)
             if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                intent.addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
+                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                )
                 val options = ActivityOptions.makeBasic()
                 options.setLaunchDisplayId(displayId)
                 context.startActivity(intent, options.toBundle())
-                Log.d(TAG, "App ${freeformConfig.packageName} launched onto display $displayId")
+                Log.d(TAG, "App ${freeformConfig.packageName} launched onto display $displayId with EXCLUDE_FROM_RECENTS")
             } else {
                 Log.e(TAG, "No launch intent for package: ${freeformConfig.packageName}")
             }
@@ -374,9 +378,10 @@ class FreeformWindow(
         } catch (e: Exception) {
             Log.e(TAG, "Failed to maximize app", e)
         }
-        // Destroy the floating window after a short delay so the main display can take over the activity seamlessly
+        // Destroy the floating window after a short delay so the main display can take over the activity seamlessly.
+        // Pass removeTask = false so maximizing promotes and preserves the app on the main display!
         handler.postDelayed({
-            destroy("maximizeApp")
+            destroy("maximizeApp", removeTask = false)
         }, 300)
     }
 
@@ -465,10 +470,123 @@ class FreeformWindow(
 
     fun getFreeformId(): String = freeformConfig.packageName
 
-    fun destroy(callReason: String = "user") {
+    private fun removeTasksForCurrentApp(displayId: Int) {
+        // 1. Inject back keys into the virtual display to finish activities gracefully
+        if (displayId >= 0) {
+            try {
+                val backCount = (subscreenDepth + 1).coerceIn(1, 10)
+                for (i in 0 until backCount) {
+                    FreeformInputTouchListener.injectBackKey(context, displayId)
+                }
+                Log.d(TAG, "Injected $backCount back keys to displayId=$displayId on close")
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to inject back keys on close", e)
+            }
+        }
+
+        // 2. Find task IDs matching displayId or packageName and remove via ActivityTaskManager
+        try {
+            val taskIdsToRemove = mutableSetOf<Int>()
+
+            // Query via ActivityTaskManager.getTasks or getAllRootTaskInfosOnDisplay
+            try {
+                val atmClass = Class.forName("android.app.ActivityTaskManager")
+                val getTasksMethod = atmClass.getMethod(
+                    "getTasks",
+                    Int::class.javaPrimitiveType,
+                    Boolean::class.javaPrimitiveType,
+                    Boolean::class.javaPrimitiveType,
+                    Int::class.javaPrimitiveType
+                )
+                val atm = atmClass.getMethod("getInstance").invoke(null)
+                val taskList = getTasksMethod.invoke(atm, 25, false, false, displayId) as? List<*>
+                taskList?.forEach { taskInfo ->
+                    if (taskInfo != null) {
+                        try {
+                            val tid = taskInfo.javaClass.getField("taskId").getInt(taskInfo)
+                            if (tid > 0) taskIdsToRemove.add(tid)
+                        } catch (_: Exception) {}
+                    }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "ActivityTaskManager.getTasks reflection failed", e)
+            }
+
+            // Also check appTasks from ActivityManager
+            try {
+                val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                val appTasks = am.appTasks
+                appTasks?.forEach { appTask ->
+                    try {
+                        val taskInfo = appTask.taskInfo
+                        val baseIntent = taskInfo.baseIntent
+                        val pkg = baseIntent?.component?.packageName ?: taskInfo.origActivity?.packageName
+                        if (pkg == freeformConfig.packageName) {
+                            taskIdsToRemove.add(taskInfo.taskId)
+                        }
+                    } catch (_: Exception) {}
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Querying appTasks failed", e)
+            }
+
+            // Invoke removeTask(taskId) for all discovered tasks
+            if (taskIdsToRemove.isNotEmpty()) {
+                val atmService = try {
+                    val atmClass = Class.forName("android.app.ActivityTaskManager")
+                    atmClass.getMethod("getService").invoke(null)
+                } catch (_: Exception) {
+                    try {
+                        val smClass = Class.forName("android.os.ServiceManager")
+                        val binder = smClass.getMethod("getService", String::class.java).invoke(null, "activity_task")
+                        val stubClass = Class.forName("android.app.IActivityTaskManager\$Stub")
+                        stubClass.getMethod("asInterface", android.os.IBinder::class.java).invoke(null, binder)
+                    } catch (_: Exception) {
+                        null
+                    }
+                }
+
+                if (atmService != null) {
+                    val removeTaskMethod = try {
+                        atmService.javaClass.getMethod("removeTask", Int::class.javaPrimitiveType)
+                    } catch (_: Exception) {
+                        null
+                    }
+                    if (removeTaskMethod != null) {
+                        for (tid in taskIdsToRemove) {
+                            try {
+                                val res = removeTaskMethod.invoke(atmService, tid)
+                                Log.d(TAG, "ActivityTaskManager.removeTask($tid) result=$res")
+                            } catch (e: Exception) {
+                                Log.w(TAG, "Failed to removeTask($tid)", e)
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "removeTasksForCurrentApp encountered an error", e)
+        }
+
+        // 3. Kill background processes for the target package
+        try {
+            val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            am.killBackgroundProcesses(freeformConfig.packageName)
+            Log.d(TAG, "killBackgroundProcesses called for ${freeformConfig.packageName}")
+        } catch (e: Exception) {
+            Log.w(TAG, "killBackgroundProcesses failed for ${freeformConfig.packageName}", e)
+        }
+    }
+
+    fun destroy(callReason: String = "user", removeTask: Boolean = true) {
         if (isDestroyed) return
         isDestroyed = true
-        Log.d(TAG, "destroy called: $callReason")
+        Log.d(TAG, "destroy called: $callReason, removeTask=$removeTask")
+
+        val targetDisplayId = freeformConfig.displayId
+        if (removeTask) {
+            removeTasksForCurrentApp(targetDisplayId)
+        }
 
         handler.post {
             try {
