@@ -8,8 +8,11 @@ Designed to replace heavy, proprietary OEM sidebars, BestEdgingPanel provides se
 
 ##  How It Works (System-Privileged Integration)
 
+
+
 Unlike standard user-installed sidebar utilities that require constant battery-optimization exemptions, accessibility workarounds, or ADB permissions after every reboot, **BestEdgingPanel is built and pre-granted as an Android system `priv-app`**:
 
+0.first enable freeform windows by modifying the system server or use adb command : `adb shell settings put global enable_freeform_support 1`   
 1. **System `priv-app` Integration (`privapp-permissions.xml`)**:
    - Resides directly under `/system/priv-app/BestEdgingPanel/` or `/system_ext/priv-app/BestEdgingPanel/`.
    - Granted elevated system permissions automatically out-of-the-box (`SYSTEM_ALERT_WINDOW`, `WRITE_SECURE_SETTINGS`, privileged window management, and package querying).
