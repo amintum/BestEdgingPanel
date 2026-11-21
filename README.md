@@ -1,110 +1,67 @@
-# Smart Edge: Sidebar & Gestures
+# BestEdgingPanel
 
-<p align="center">
-  <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_web.png" width="128" height="128" alt="Smart Edge Logo">
-</p>
+**BestEdgingPanel** is a lightweight, high-performance edge sidebar and multitasking enhancement built natively for custom Android ROMs. It is currently integrated as a core system privileged application in **BestGSI (Android 17)**.
 
-<p align="center">
-  <b>A highly customizable Android side panel inspired by OriginOS.</b><br>
-  Access your favorite apps, tools, and shortcuts with a single swipe.
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/f-droid/v/com.imi.smartedge.sidebar.panel?logo=f-droid&logoColor=white" alt="F-Droid">
-  <img src="https://img.shields.io/badge/Platform-Android%208.0%2B-brightgreen.svg" alt="Android 8.0+">
-  <img src="https://img.shields.io/badge/Language-Kotlin-blue.svg" alt="Kotlin">
-  <img src="https://img.shields.io/badge/License-MIT-orange.svg" alt="License MIT">
-  <img src="https://img.shields.io/badge/Design-Material%203-7b1fa2.svg" alt="Material 3">
-</p>
-
-<p align="center">
-  <a href="https://f-droid.org/en/packages/com.imi.smartedge.sidebar.panel/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80" border="0"></a>
-  <a href="https://github.com/Imtiaz-Official/Smart-Edge/releases/latest"><img src="https://raw.githubusercontent.com/machiav3lli/oandbackupx/master/badge_github.png" alt="Get it on GitHub" height="80" border="0"></a>
-</p>
-
-<div align="center">
-  <table>
-    <tr>
-      <td><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="200" /></td>
-      <td><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="200" /></td>
-      <td><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="200" /></td>
-      <td><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="200" /></td>
-    </tr>
-  </table>
-</div>
+Designed to replace heavy, proprietary OEM sidebars, BestEdgingPanel provides seamless access to your favorite apps, tools, and actions via customizable gesture handles on either screen edge, coupled with true desktop-grade floating freeform multitasking.
 
 ---
 
-<h2 align="center">Key Features</h2>
+##  How It Works (System-Privileged Integration)
 
-*   **Custom UI Themes:** Choose from **OriginOS**, **HyperOS (Glass)**, **Realme UI**, and **Rich UI** styles.
-*   **Glassmorphic Blur:** High-quality real-time background blur with **adjustable intensity** (Optimized for Android 12+).
-*   **Material You:** Full support for dynamic accent colors and Material 3 components (Supports Android 12+ dynamic colors).
-*   **Smart App Picker:** Integrated search and management system to pin your most-used apps.
-*   **Utility Tools:** Built-in tools like **Screenshot** (one-tap) shortcut, Volume and Brightness controls.
-*   **Premium Motion:** Physics-based spring animations with customizable feel (Calm to Instant).
-*   **Edge Gestures:** Responsive edge-swipe triggers with adjustable height, width, and position.
-*   **Icon Customization:** Full support for **Icon Packs** and custom icon shapes (Circle, Squircle, Square).
-*   **Productivity Hub:** Active notifications section with instant **Freeform Window** launching.
-*   **Multitasking:** Drag-and-drop apps to **Split-Screen** or **Freeform** mode.
-*   **Manual Hide:** Select specific apps where the sidebar handle will automatically hide itself.
+Unlike standard user-installed sidebar utilities that require constant battery-optimization exemptions, accessibility workarounds, or ADB permissions after every reboot, **BestEdgingPanel is built and pre-granted as an Android system `priv-app`**:
 
----
-
-<h2 align="center">How to Use</h2>
-
-1.  **Install:** Download and install the latest APK.
-2.  **Permissions:** 
-    *   Grant **"Display over other apps"** to allow the panel to float.
-    *   Enable **"Accessibility Service"** for gesture auto-close and system shortcuts.
-    *   Enable **"Notification Access"** for the Productivity Hub.
-3.  **Setup:** Open the app and follow the onboarding guide to activate the service.
-4.  **Gesture:** Swipe from the edge of your screen (where the handle is) to open your new panel!
+1. **System `priv-app` Integration (`privapp-permissions.xml`)**:
+   - Resides directly under `/system/priv-app/BestEdgingPanel/` or `/system_ext/priv-app/BestEdgingPanel/`.
+   - Granted elevated system permissions automatically out-of-the-box (`SYSTEM_ALERT_WINDOW`, `WRITE_SECURE_SETTINGS`, privileged window management, and package querying).
+2. **Zero-Setup Experience**:
+   - No intrusive onboarding wizards, permission request dialogs, or battery-restriction prompts on fresh ROM boot.
+   - Automatically activates and registers edge handles seamlessly upon device startup.
+3. **Privileged Accessibility & Window Operations**:
+   - Leverages elevated platform privileges to trigger instant system actions (Back, Home, Recents, Notifications, Power Menu, Quick Settings, Screenshot) without lag or accessibility crashes.
+4. **Android 17 Treble Ready**: tested on BestGSI
 
 ---
 
-<h2 align="center">Customization</h2>
+##  Key Changes
 
-Smart Edge is built to be yours. In the settings, you can adjust:
-*   **Interaction:** Gesture sensitivity, haptic feedback, and scroll memory.
-*   **Animation:** Choose your preferred animation speed (Calm, Balanced, or Snappy).
-*   **Appearance:** Background opacity, corner radius, blur intensity, icon scaling, and grid columns.
-*   **Position:** Move the trigger handle to either the left or right side and adjust its vertical offset.
+BestEdgingPanel was evolved from open-source foundations into a clean, system-grade utility tailored for BestGSI:
 
----
-
-<h2 align="center">Requirements</h2>
-
-*   **Android 8.0 (API 26) or higher:** Standard requirement for core functionality.
-*   **Accessibility Service:** Required for core interaction and multi-window features.
-*   **Android 12+:** Recommended for native real-time background blur and Material You dynamic color support.
-
----
-
-<h2 align="center">Technical Details</h2>
-
-*   **Kotlin:** Written entirely in Kotlin for safety and performance.
-*   **Spring Physics:** Powered by `androidx.dynamicanimation` for natural, fluid motion.
-*   **Material 3:** Implements the latest Material Design components and styling.
-*   **Clean Architecture:** Separated concerns between Service, Repository, and UI layers.
-*   **Optimized Rendering:** Uses hardware-accelerated layers and LruCache for smooth, lag-free icon loading.
+* **Complete Rebrand & Bloat Removal**:
+  - Fully rebranded to **BestEdgingPanel** (launcher label **BEP**).
+  - Stripped all donation buttons, promotional links, third-party analytics, and user-space permission warnings.
+* **Modern Freeform Windowing**:
+  - Implemented modern floating window multitasking with soft-keyboard adaptation, custom default aspect ratios, and seamless window dragging.
+  - Added clean termination logic to prevent lingering transparent ghost windows or recents clutter upon closing freeform apps.
+  - Eliminated launch flicker on transparent activity initialization.
+* **Android 16/17 Material Expressive UI**:
+  - Completely redesigned settings architecture into **Material Expressive Inset Grouped Pods** and a streamlined **Hero Switch**.
+  - Flat unboxed, typography-focused layouts with crisp hairline dividers and dynamic search bar.
+  - Dynamic **Follow System** theme engine that instantly harmonizes with system Light and AMOLED Dark modes.
+* **Quick Settings Tile & Stealth Integration**:
+  - Added a dedicated system Quick Settings tile for instant one-tap toggle of edge handles.
+  - Long-pressing the QS tile opens BestEdgingPanel settings directly.
+  - Stealth mode support to hide the launcher icon while retaining full accessibility through system settings and the QS tile.
+* **Performance & Touch Latency**:
+  - Tuned edge swipe triggers for near-zero touch latency on RenderThread animators.
+  - Implemented aggressive `LruCache` and coroutines pre-loading for buttery smooth app drawer scrolling.
 
 ---
 
-<h2 align="center">License</h2>
+## What This Project Is For
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+* **OEM-Free Multitasking**: Bringing Samsung Edge Panel / Xiaomi Sidebar style multitasking to AOSP,Treble GSIs without OEM framework dependencies.
+* **Productivity & Speed**: Fast, one-handed app switching, floating calculator/browser popups, and quick gestures on any screen size.
 
 ---
 
-<h2 align="center">Credits & Acknowledgments</h2>
+## 🙏 Credits & Acknowledgments
 
 This project is made possible thanks to the following open-source contributions and inspirations:
 
-*   **[Smart Edge](https://github.com/Imtiaz-Official/Smart-Edge)**
-*   **[Mi-Freeform](https://github.com/sunshine0523/Mi-Freeform)**
-*   **[SmartDock](https://github.com/Axel358/SmartDock)**
-*   **[HiddenApiBypass](https://github.com/LSPosed/Android-HiddenApiBypass)**
-*   **[ColorPickerView](https://github.com/skydoves/ColorPickerView)**
+* **[Smart Edge](https://github.com/Imtiaz-Official/Smart-Edge)**
+* **[Mi-Freeform](https://github.com/sunshine0523/Mi-Freeform)**
+* **[SmartDock](https://github.com/Axel358/SmartDock)**
+* **[HiddenApiBypass](https://github.com/LSPosed/Android-HiddenApiBypass)**
+* **[ColorPickerView](https://github.com/skydoves/ColorPickerView)**
 
 ---
