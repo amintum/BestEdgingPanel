@@ -103,4 +103,9 @@ This project is made possible thanks to the following open-source contributions 
 
 *   **[Smart Edge](https://github.com/Imtiaz-Official/Smart-Edge)**
 *   **[Mi-Freeform](https://github.com/sunshine0523/Mi-Freeform)**
+
+*   **[SmartDock (Axel358)](https://github.com/Axel358/SmartDock)**: Conceptual inspiration and desktop-style interactions on Android.
+*   **~~[HiddenApiBypass (LSPosed)](https://github.com/LSPosed/Android-HiddenApiBypass)**: A critical library for enabling access to restricted windowing and system APIs.~~
+*   **[ColorPickerView (skydoves)](https://github.com/skydoves/ColorPickerView)**: Modern and effective color picker for UI customization.
+*   **[Glide](https://github.com/bumptech/glide)**: Efficient media management and image loading framework for Android.
 ---
